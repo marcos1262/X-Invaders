@@ -1,0 +1,8 @@
+Jogo de nave
+
+- O jogador controla a enterprise em movimentos para esquerda e direita
+- Asteróides vão caindo pelo topo da tela (fazer lista de asteróides)
+- Fazer a detecção de colisão da nave com os asteróides (usar bounding circle)
+- caso haja colisão, a nave é destruída
+- barra de espaço atira
+-- fazer a detecção de colisão do tiro com a lista de asteróides

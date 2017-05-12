@@ -1,0 +1,38 @@
+
+
+# retorna True se houve intersecao entre o retangulo (x1, y1, w1, h1) e (x2, y2, w2, h2).
+# considera (x1,y1) e (x2,y2) como sendo o centro.
+#
+def check_collision(w1, h1, x1, y1, w2, h2, x2, y2):
+
+    left1 = x1 - w1/2
+    right1 = x1 + w1/2    
+    top1 = y1 + h1/2
+    bottom1 = y1 - h1/2
+    
+    left2 = x2 - w2/2
+    right2 = x2 + w2/2    
+    top2 = y2 + h2/2
+    bottom2 = y2 - h2/2
+    
+    colide_em_x = (right2 >= left1 and right2 <= right1) or ( right1 >= left2 and right1 <= right2 )
+    colide_em_y = (bottom2 >= top1 and bottom2 <= bottom1) or ( bottom1 >= top2 and bottom1 <= bottom2 )
+    return colide_em_x and colide_em_y
+
+
+for obj in self.gl_scene:
+    if isinstance( obj, Asteroid ):        
+        if obj.check_collision( self.ship ):
+            self.morre()
+
+
+def morre():
+    self.ship.is_dead = True
+    self.timeout_add( 4000, self.ressuscita )
+
+
+def ressuscita():
+    self.ship.is_dead = False
+    self.ship.position.x = random() * view_w
+    self.gl_scene.append( self.ship )
+
