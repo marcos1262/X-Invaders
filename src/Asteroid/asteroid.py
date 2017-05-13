@@ -3,15 +3,17 @@
 
 from OpenGL.GL import *
 
-from libvec import *
 import os.path
 import gtk
+
+from Asteroid.libvec import *
+
 
 class Asteroid:
     def __init__(self, x = 0, y = 0):
         mydir = os.path.dirname(__file__)
-        self.img = gtk.gdk.pixbuf_new_from_file(os.path.join( mydir, "asteroid.png"))
-        self.crt = gtk.gdk.pixbuf_new_from_file(os.path.join( mydir, "creto.png"))
+        self.img = gdk.pixbuf_new_from_file(os.path.join( mydir, "asteroid.png"))
+        self.crt = gdk.pixbuf_new_from_file(os.path.join( mydir, "creto.png"))
         self.position = Vector()
         self.position.x = x
         self.position.y = y
