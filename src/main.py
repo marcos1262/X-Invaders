@@ -2,14 +2,22 @@ from OpenGL.GL import *
 from PyQt5.QtWidgets import *
 
 from XInvadersUi import Ui_MainWindow
-from camera import Camera
+from Camera import Camera
 
 
 class XInvaders(QOpenGLWidget):
     def __init__(self, parent):
         QOpenGLWidget.__init__(self, parent)
         self.iniciaJogo = False
+        self.nivel = 0
         self.camera = None
+
+        self.jogador = None
+        self.boss = None
+        self.tiros = []
+        self.asteroides = []
+        self.estrelas = []
+        self.inimigos = []
 
     def initializeGL(self):
         """
@@ -19,13 +27,17 @@ class XInvaders(QOpenGLWidget):
         # Habilita transparência
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
+
         # Habilita teste de profundidade
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
+
         # Define cor de fundo
         glClearColor(0, 0, 0, 0)
+
         # Modo de superfície suave
         glShadeModel(GL_SMOOTH)
+
         # Inicializa câmera
         self.camera = Camera()
 
@@ -38,6 +50,7 @@ class XInvaders(QOpenGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # TODO Desenha fundo estelar
+        # Desenha triângulo (TESTE)
         glColor3f(1.0, 0.0, 0.0)
 
         glBegin(GL_TRIANGLES)
@@ -51,7 +64,21 @@ class XInvaders(QOpenGLWidget):
             glFlush()
             return
 
-        # Desenha triângulo
+        # TODO remover objetos fora da cena
+
+        # TODO desenhar asteroides e estrelas
+
+        # TODO desenhar jogador
+
+        # TODO desenhar inimigos (de acordo com o nível)
+
+        # TODO desenhar tiros
+
+        # TODO detectar colisões
+
+        # TODO mostrar minitutorial de como jogar (no nível 0)
+
+        # Desenha triângulo (TESTE)
         glColor3f(1.0, 1.0, 0.0)
 
         glBegin(GL_TRIANGLES)
