@@ -1,15 +1,14 @@
 from OpenGL.GL import *
-from PyQt5.QtOpenGL import *
 from PyQt5.QtWidgets import *
 
+from XInvadersUi import Ui_MainWindow
 from camera import Camera
-from ui.XInvadersUi import Ui_MainWindow
 
 
 class XInvaders(QOpenGLWidget):
     def __init__(self, parent):
         QOpenGLWidget.__init__(self, parent)
-        self.rodando = False
+        self.iniciaJogo = False
         self.camera = None
 
     def initializeGL(self):
@@ -35,9 +34,22 @@ class XInvaders(QOpenGLWidget):
         Desenha a cena
         :return: None
         """
-        if not self.rodando: return
         # Limpa tela
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        # TODO Desenha fundo estelar
+        glColor3f(1.0, 0.0, 0.0)
+
+        glBegin(GL_TRIANGLES)
+        glVertex3f(-100, 5, 0)
+        glVertex3f(-110, -10, 0)
+        glVertex3f(-90, -10, 0)
+        glEnd()
+
+        if not self.iniciaJogo:
+            # Atualiza tela
+            glFlush()
+            return
 
         # Desenha triângulo
         glColor3f(1.0, 1.0, 0.0)

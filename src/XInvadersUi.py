@@ -16,7 +16,6 @@ class Ui_MainWindow(object):
         self.centralWidget.setObjectName("centralWidget")
         self.painel_menu = QtWidgets.QWidget(self.centralWidget)
         self.painel_menu.setGeometry(QtCore.QRect(0, -1, 700, 701))
-        self.painel_menu.setAutoFillBackground(True)
         self.painel_menu.setObjectName("painel_menu")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.painel_menu)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 190, 701, 321))
@@ -68,7 +67,7 @@ class Ui_MainWindow(object):
 
     def iniciaJogo(self):
         self.painel_menu.hide()
-        self.jogo.rodando = True
+        self.jogo.iniciaJogo = True
 
 
 if __name__ == "__main__":
