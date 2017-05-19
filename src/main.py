@@ -1,11 +1,15 @@
 from OpenGL.GL import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtMultimedia import QSound
 
 from XInvadersUi import Ui_MainWindow
 from Camera import Camera
 
 
 class XInvaders(QOpenGLWidget):
+    """
+    Representa o jogo
+    """
     def __init__(self, parent):
         QOpenGLWidget.__init__(self, parent)
         self.iniciaJogo = False
@@ -18,6 +22,8 @@ class XInvaders(QOpenGLWidget):
         self.asteroides = []
         self.estrelas = []
         self.inimigos = []
+        a = QSound("../sounds/SFX/Falcon Laser 1.wav",self)
+        a.play()
 
     def initializeGL(self):
         """
