@@ -22,7 +22,7 @@ class XInvaders(QOpenGLWidget):
         self.asteroides = []
         self.estrelas = []
         self.inimigos = []
-        a = QSound("../sounds/SFX/Falcon Laser 1.wav",self)
+        a = QSound("../sounds/ThemeMusicB19.wav",self)
         a.play()
 
     def initializeGL(self):
