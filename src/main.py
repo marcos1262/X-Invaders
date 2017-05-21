@@ -1,9 +1,16 @@
-from OpenGL.GL import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtMultimedia import QSound
+import os
 
+from OpenGL.GL import *
+
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QSound, QMediaPlayer, QMediaContent
+from PyQt5.QtWidgets import *
+
+from Nave import Nave
+from CameraOrtogonal import CameraOrtogonal
 from XInvadersUi import Ui_MainWindow
-from Camera import Camera
+
+jogoLargura, jogoAltura = 700, 700
 
 
 class XInvaders(QOpenGLWidget):
@@ -22,8 +29,21 @@ class XInvaders(QOpenGLWidget):
         self.asteroides = []
         self.estrelas = []
         self.inimigos = []
-        a = QSound("../sounds/SFX/Falcon Laser 1.wav",self)
-        a.play()
+
+        self.inicializaObjetos()
+
+        # a = QSound("../sounds/SFX/Falcon Laser 1.wav", self)
+        # a.play()
+
+        # TODO tocar tema infinitamente
+        # dir_projeto = os.getcwd() + "/../"
+        #
+        # url = QUrl().fromLocalFile(dir_projeto + "sounds/ThemeMusicB19.mp3")
+        # content = QMediaContent(url)
+        # player = QMediaPlayer()
+        # player.setMedia(content)
+        # player.play()
+        # player.stateChanged.connect(lambda: player.disconnect())
 
     def initializeGL(self):
         """
@@ -45,7 +65,7 @@ class XInvaders(QOpenGLWidget):
         glShadeModel(GL_SMOOTH)
 
         # Inicializa câmera
-        self.camera = Camera()
+        self.camera = CameraOrtogonal(jogoLargura, jogoAltura, True)
 
     def paintGL(self):
         """
@@ -56,14 +76,6 @@ class XInvaders(QOpenGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # TODO Desenha fundo estelar
-        # Desenha triângulo (TESTE)
-        glColor3f(1.0, 0.0, 0.0)
-
-        glBegin(GL_TRIANGLES)
-        glVertex3f(-100, 5, 0)
-        glVertex3f(-110, -10, 0)
-        glVertex3f(-90, -10, 0)
-        glEnd()
 
         if not self.iniciaJogo:
             # Atualiza tela
@@ -72,29 +84,46 @@ class XInvaders(QOpenGLWidget):
 
         # TODO remover objetos fora da cena
 
-        # TODO desenhar asteroides e estrelas
+        # Desenha objetos da cena
+        for asteroide in self.asteroides:   asteroide.desenha()
+        for estrela in self.estrelas:       estrela.desenha()
+        for inimigo in self.inimigos:       inimigo.desenha()
+        for tiro in self.tiros:             tiro.desenha()
+        self.jogador.desenha()
 
-        # TODO desenhar jogador
-
-        # TODO desenhar inimigos (de acordo com o nível)
-
-        # TODO desenhar tiros
-
-        # TODO detectar colisões
+        # Verifica ocorrências de colisão
+        self.detectaColisoes()
 
         # TODO mostrar minitutorial de como jogar (no nível 0)
 
-        # Desenha triângulo (TESTE)
-        glColor3f(1.0, 1.0, 0.0)
-
-        glBegin(GL_TRIANGLES)
-        glVertex3f(0, 50, 0)
-        glVertex3f(-100, -100, 0)
-        glVertex3f(100, -100, 0)
-        glEnd()
-
         # Atualiza tela
         glFlush()
+
+    def inicializaObjetos(self):
+        self.jogador = Nave(25, 40, 0, py(-25), Nave.Tipos.JOGADOR)
+        # TODO inicializar objetos
+
+    def detectaColisoes(self):
+        # TODO Verificar colisões
+        pass
+
+
+def px(porcentagem):
+    """
+    Retorna valor de uma posição no eixo X da tela baseado em uma porcentagem
+    :param porcentagem: porcentagem da tela que se deseja saber o valor
+    :return: valor da posição no eixo X da tela
+    """
+    return jogoLargura * porcentagem / 100
+
+
+def py(porcentagem):
+    """
+    Retorna valor de uma posição no eixo X da tela baseado em uma porcentagem
+    :param porcentagem: porcentagem da tela que se deseja saber o valor
+    :return: valor da posição no eixo X da tela
+    """
+    return jogoLargura * porcentagem / 100
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 
-class Camera:
+class CameraPerspectiva:
     def __init__(self, fov=30, ar=1, near=1, far=1000):
         self.fov = fov
         self.ar = ar
