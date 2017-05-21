@@ -49,7 +49,15 @@ class Nave:
 
     def move(self):
         # TODO detectar colisão com a parede
-        if self.esquerda: self.x -= self.velocidade
-        if self.direita: self.x += self.velocidade
-        if self.cima: self.y += self.velocidade
-        if self.baixo: self.y -= self.velocidade
+        if self.esquerda:
+            if self.x>-350+self.largura/2:
+                self.x -= self.velocidade
+        if self.direita:
+            if self.x<350-self.largura/2:
+                self.x += self.velocidade
+        if self.cima:
+            if self.y<350-self.altura/2:
+                self.y += self.velocidade
+        if self.baixo:
+            if self.y >-350+self.altura/2:
+                self.y -= self.velocidade
