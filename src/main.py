@@ -15,9 +15,8 @@ jogoLargura, jogoAltura = 700, 700
 
 class XInvaders(QOpenGLWidget):
     """
-    Representa o jogo
+    Representa o jogo.
     """
-
     def __init__(self, parent):
         QOpenGLWidget.__init__(self, parent)
         self.iniciaJogo = False
@@ -52,56 +51,50 @@ class XInvaders(QOpenGLWidget):
 
     def initializeGL(self):
         """
-        Configurações inicias (tela e câmera)
+        Configurações inicias (tela e câmera).
+        Habilita transparência, teste de profundidade, define cor de fundo, modo de superfície e inicializa câmera.
         :return: None
         """
-        # Habilita transparência
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
 
-        # Habilita teste de profundidade
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
 
-        # Define cor de fundo
         glClearColor(0, 0, 0, 0)
 
-        # Modo de superfície suave
         glShadeModel(GL_SMOOTH)
 
-        # Inicializa câmera
         self.camera = CameraOrtogonal(jogoLargura, jogoAltura, True)
 
     def paintGL(self):
         """
-        Desenha a cena
+        Desenha a cena.
+        Limpa tela, desenha objetos da cena, verifica ocorrrências de colisão, mostra pontuação e atualiza tela.
         :return: None
         """
-        # Limpa tela
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # TODO Desenha fundo estelar
 
         if not self.iniciaJogo:
-            # Atualiza tela
             glFlush()
             return
 
         # TODO remover objetos fora da cena
 
-        # Desenha objetos da cena
         for asteroide in self.asteroides:   asteroide.desenha()
         for estrela in self.estrelas:       estrela.desenha()
         for inimigo in self.inimigos:       inimigo.desenha()
         for tiro in self.tiros:             tiro.desenha()
         self.jogador.desenha()
 
-        # Verifica ocorrências de colisão
         self.detecta_colisoes()
+
+        self.mostra_pontuacao()
 
         # TODO mostrar minitutorial de como jogar (no nível 0)
 
-        # Atualiza tela
         glFlush()
 
     def timerEvent(self, event):
@@ -124,14 +117,18 @@ class XInvaders(QOpenGLWidget):
         # TODO inicializar objetos
 
     def detecta_colisoes(self):
-        # TODO Verificar colisões
+        # TODO Verificar colisões, remover da lista de objetos, contabilizar pontuação
+        pass
+
+    def mostra_pontuacao(self):
+        # TODO Mostrar pontuação
         pass
 
 
 def px(porcentagem):
     """
-    Retorna valor de uma posição no eixo X da tela baseado em uma porcentagem
-    :param porcentagem: porcentagem da tela que se deseja saber o valor
+    Retorna valor de uma posição no eixo X da tela baseado em uma porcentagem.
+    :param porcentagem: porcentagem da tela que se deseja saber o valor.
     :return: valor da posição no eixo X da tela
     """
     return jogoLargura * porcentagem / 100
@@ -139,8 +136,8 @@ def px(porcentagem):
 
 def py(porcentagem):
     """
-    Retorna valor de uma posição no eixo X da tela baseado em uma porcentagem
-    :param porcentagem: porcentagem da tela que se deseja saber o valor
+    Retorna valor de uma posição no eixo X da tela baseado em uma porcentagem.
+    :param porcentagem: porcentagem da tela que se deseja saber o valor.
     :return: valor da posição no eixo X da tela
     """
     return jogoLargura * porcentagem / 100

@@ -4,6 +4,10 @@ from OpenGL.GL import *
 
 
 class Nave:
+    """
+    Representa todo tipo de nave.
+    """
+
     class Tipos(Enum):
         JOGADOR = 1
         BOSS = 2
