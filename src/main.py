@@ -2,13 +2,13 @@ import os
 
 from OpenGL.GL import *
 
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtMultimedia import QSound, QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import *
 
 from Nave import Nave
-from CameraOrtogonal import CameraOrtogonal
 from XInvadersUi import Ui_MainWindow
+from CameraOrtogonal import CameraOrtogonal
 
 jogoLargura, jogoAltura = 700, 700
 
@@ -17,6 +17,7 @@ class XInvaders(QOpenGLWidget):
     """
     Representa o jogo
     """
+
     def __init__(self, parent):
         QOpenGLWidget.__init__(self, parent)
         self.iniciaJogo = False
@@ -30,7 +31,9 @@ class XInvaders(QOpenGLWidget):
         self.estrelas = []
         self.inimigos = []
 
-        self.inicializaObjetos()
+        self.inicializa_objetos()
+
+        # self.tocaTema()
 
         # a = QSound("../sounds/SFX/Falcon Laser 1.wav", self)
         # a.play()
@@ -44,6 +47,8 @@ class XInvaders(QOpenGLWidget):
         # player.setMedia(content)
         # player.play()
         # player.stateChanged.connect(lambda: player.disconnect())
+
+        self.startTimer(30)
 
     def initializeGL(self):
         """
@@ -92,18 +97,33 @@ class XInvaders(QOpenGLWidget):
         self.jogador.desenha()
 
         # Verifica ocorrências de colisão
-        self.detectaColisoes()
+        self.detecta_colisoes()
 
         # TODO mostrar minitutorial de como jogar (no nível 0)
 
         # Atualiza tela
         glFlush()
 
-    def inicializaObjetos(self):
+    def timerEvent(self, event):
+        self.update()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Left:  self.jogador.esquerda = True
+        if event.key() == Qt.Key_Right: self.jogador.direita = True
+        if event.key() == Qt.Key_Up:    self.jogador.cima = True
+        if event.key() == Qt.Key_Down:  self.jogador.baixo = True
+
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Left:  self.jogador.esquerda = False
+        if event.key() == Qt.Key_Right: self.jogador.direita = False
+        if event.key() == Qt.Key_Up:    self.jogador.cima = False
+        if event.key() == Qt.Key_Down:  self.jogador.baixo = False
+
+    def inicializa_objetos(self):
         self.jogador = Nave(25, 40, 0, py(-25), Nave.Tipos.JOGADOR)
         # TODO inicializar objetos
 
-    def detectaColisoes(self):
+    def detecta_colisoes(self):
         # TODO Verificar colisões
         pass
 

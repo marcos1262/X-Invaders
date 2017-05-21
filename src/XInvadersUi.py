@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
 
     def iniciaJogo(self):
         self.painel_menu.hide()
+        self.jogo.setFocus()
         self.jogo.iniciaJogo = True
 
 

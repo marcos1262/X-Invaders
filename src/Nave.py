@@ -1,4 +1,3 @@
-from builtins import print
 from enum import Enum
 
 from OpenGL.GL import *
@@ -17,6 +16,13 @@ class Nave:
         self.y = y
         self.tipo = tipo
 
+        self.velocidade = 10
+
+        self.esquerda = False
+        self.direita = False
+        self.cima = False
+        self.baixo = False
+
     def desenha(self):
         # TODO colocar textura
         if self.tipo == self.Tipos.JOGADOR:
@@ -28,9 +34,18 @@ class Nave:
         else:
             glColor4f(1, 1, 1, 1)
 
+        self.move()
+
         glBegin(GL_QUADS)
         glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
         glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
         glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
         glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
         glEnd()
+
+    def move(self):
+        # TODO detectar colisão com a parede
+        if self.esquerda: self.x -= self.velocidade
+        if self.direita: self.x += self.velocidade
+        if self.cima: self.y += self.velocidade
+        if self.baixo: self.y -= self.velocidade
