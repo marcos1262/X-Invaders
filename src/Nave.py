@@ -36,7 +36,8 @@ class Nave(QObject):
         self.cima = False
         self.baixo = False
 
-        self.startTimer(250)
+        self.startTimer(150)
+        self.tiro1 = True
 
     def desenha(self):
         # TODO colocar textura na nave
@@ -73,21 +74,24 @@ class Nave(QObject):
             pass
 
     def atira(self):
-        tiro1 = Tiro(3, 25,
-                     self.x - self.largura / 2,
-                     self.y + self.altura / 2 + 15,
-                     self.jogo,
-                     TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x - self.largura / 2, True))
-        tiro2 = Tiro(3, 25,
-                     self.x + self.largura / 2,
-                     self.y + self.altura / 2 + 15,
-                     self.jogo,
-                     TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x + self.largura / 2, True))
+        if self.tiro1:
+            tiro = Tiro(3, 25,
+                         self.x - self.largura / 2,
+                         self.y + self.altura / 2 + 15,
+                         self.jogo,
+                         TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x - self.largura / 2, True))
+            self.jogo.tiros.append(tiro)
+            self.tiro1 = False
+        else:
+            tiro = Tiro(3, 25,
+                         self.x + self.largura / 2,
+                         self.y + self.altura / 2 + 15,
+                         self.jogo,
+                         TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x + self.largura / 2, True))
+            self.jogo.tiros.append(tiro)
+            self.tiro1 = True
 
-        self.jogo.tiros.append(tiro1)
-        self.jogo.tiros.append(tiro2)
-
-        QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
+        # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
     def timerEvent(self, QTimerEvent):
         if self.jogo.iniciaJogo: self.atira()

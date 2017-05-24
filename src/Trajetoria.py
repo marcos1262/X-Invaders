@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from math import sin
+
 
 class Trajetoria(ABC):
     """
@@ -40,6 +42,33 @@ class TrajetoriaLinear(Trajetoria):
 
     def gera(self):
         y = self.a * self.x + self.b
+        if self.vertical:
+            return y, self.x
+        return self.x, y
+
+
+class TrajetoriaSenoide(Trajetoria):
+    """
+    Representa uma trajetória definida por uma reta
+    """
+
+    def __init__(self, a, x_inicial, b, c, vertical=False):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.vertical = vertical
+        self.x = x_inicial
+
+    def proximo(self, incremento):
+        self.x += incremento
+        return self.gera()
+
+    def anterior(self, decremento):
+        self.x -= decremento
+        return self.gera()
+
+    def gera(self):
+        y = self.a * sin(self.x / self.b) + self.x / self.c
         if self.vertical:
             return y, self.x
         return self.x, y
