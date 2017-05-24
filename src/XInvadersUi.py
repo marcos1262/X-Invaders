@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
     def setupUi(self, mainWindow, glWindow):
         mainWindow.setObjectName("MainWindow")
@@ -69,6 +70,10 @@ class Ui_MainWindow(object):
         self.painel_menu.hide()
         self.jogo.setFocus()
         self.jogo.iniciaJogo = True
+        QtCore.QCoreApplication.sendEvent(
+            self.jogo.timerMusicaFundo,
+            QtCore.QTimerEvent(self.jogo.timerMusicaFundo.timerId())
+        )
 
 
 if __name__ == "__main__":
