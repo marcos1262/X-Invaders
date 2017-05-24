@@ -2,8 +2,14 @@ from enum import Enum
 
 from OpenGL.GL import *
 
+from PyQt5.QtCore import QObject
+from PyQt5.QtMultimedia import QSound
 
-class Nave:
+from Tiro import Tiro
+from Trajetoria import TrajetoriaLinear
+
+
+class Nave(QObject):
     """
     Representa todo tipo de nave.
     """
@@ -13,22 +19,27 @@ class Nave:
         BOSS = 2
         CAPANGA = 3
 
-    def __init__(self, largura, altura, x=0, y=0, tipo=Tipos.CAPANGA):
+    def __init__(self, largura, altura, jogo, x, y, tipo=Tipos.CAPANGA):
+        QObject.__init__(self, jogo)
         self.largura = largura
         self.altura = altura
         self.x = x
         self.y = y
         self.tipo = tipo
+        self.jogo = jogo
 
         self.velocidade = 10
+        self.visivel = True
 
         self.esquerda = False
         self.direita = False
         self.cima = False
         self.baixo = False
 
+        self.startTimer(250)
+
     def desenha(self):
-        # TODO colocar textura
+        # TODO colocar textura na nave
         if self.tipo == self.Tipos.JOGADOR:
             glColor4f(1, 1, 0, 1)
         elif self.tipo == self.Tipos.BOSS:
@@ -48,16 +59,35 @@ class Nave:
         glEnd()
 
     def move(self):
-        # TODO detectar colisão com a parede
-        if self.esquerda:
-            if self.x>-350+self.largura/2:
+        if self.tipo == self.Tipos.JOGADOR:
+            if self.esquerda and self.x > -self.jogo.jogoLargura/2 + self.largura / 2:
                 self.x -= self.velocidade
-        if self.direita:
-            if self.x<350-self.largura/2:
+            if self.direita and self.x < self.jogo.jogoLargura/2 - self.largura / 2:
                 self.x += self.velocidade
-        if self.cima:
-            if self.y<350-self.altura/2:
+            if self.cima and self.y < self.jogo.jogoAltura/2 - self.altura / 2:
                 self.y += self.velocidade
-        if self.baixo:
-            if self.y >-350+self.altura/2:
+            if self.baixo and self.y > -self.jogo.jogoAltura/2 + self.altura / 2:
                 self.y -= self.velocidade
+        else:
+            # TODO Mover outros tipos de nave
+            pass
+
+    def atira(self):
+        tiro1 = Tiro(3, 25,
+                     self.x - self.largura / 2,
+                     self.y + self.altura / 2 + 15,
+                     self.jogo,
+                     TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x - self.largura / 2, True))
+        tiro2 = Tiro(3, 25,
+                     self.x + self.largura / 2,
+                     self.y + self.altura / 2 + 15,
+                     self.jogo,
+                     TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x + self.largura / 2, True))
+
+        self.jogo.tiros.append(tiro1)
+        self.jogo.tiros.append(tiro2)
+
+        QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
+
+    def timerEvent(self, QTimerEvent):
+        if self.jogo.iniciaJogo: self.atira()

@@ -10,9 +10,12 @@ class CameraOrtogonal:
         self.centro = centro
         self.near = near
         self.far = far
-        self.atualiza()
+        self.atualiza(largura, altura)
 
-    def atualiza(self, x=0, y=0):
+    def atualiza(self, largura, altura, x=0, y=0):
+        self.largura = largura
+        self.altura = altura
+
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
 
