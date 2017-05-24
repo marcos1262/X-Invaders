@@ -5,6 +5,7 @@ from OpenGL.GL import *
 from PyQt5.QtCore import QUrl, Qt, QTimer
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import *
+from random import *
 
 from Nave import Nave
 from XInvadersUi import Ui_MainWindow
@@ -32,7 +33,11 @@ class XInvaders(QOpenGLWidget):
         self.estrelas = []
         self.inimigos = []
 
-        self.inicializa_objetos()
+        self.jogador = Nave(55, 70, self, 0, self.py(-25), Nave.Tipos.JOGADOR)
+
+        self.spawner = QTimer()
+        self.spawner.timeout.connect(self.cria_objetos)
+        self.cria_objetos()
 
         self.musicPlayer = QMediaPlayer()
         app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
@@ -144,8 +149,10 @@ class XInvaders(QOpenGLWidget):
 
         self.timerMusicaFundo.start(tempo)
 
-    def inicializa_objetos(self):
-        self.jogador = Nave(55, 70, self, 0, self.py(-25), Nave.Tipos.JOGADOR)
+    def cria_objetos(self):
+        if randint(0,1):
+            self.inimigos.append(Nave(55, 72, self, randint(self.px(-50)+55,self.px(50)-55), self.py(50), Nave.Tipos.CAPANGA))
+        self.spawner.start(randint(0,3000))
         # TODO inicializar objetos
 
     def detecta_colisoes(self):
