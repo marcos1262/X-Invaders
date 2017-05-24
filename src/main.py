@@ -1,16 +1,11 @@
 import os
-from random import randint
 
 from OpenGL.GL import *
 
 from PyQt5.QtCore import QUrl, Qt, QTimer
-<<<<<<< HEAD
-from PyQt5.QtMultimedia import QSound, QMediaPlayer, QMediaContent
-=======
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
->>>>>>> 2a9ab71ae2a99e96c221dbc3cff9330f7831f170
 from PyQt5.QtWidgets import *
-from random import *
+
 from Nave import Nave
 from XInvadersUi import Ui_MainWindow
 from CameraOrtogonal import CameraOrtogonal
@@ -28,12 +23,6 @@ class XInvaders(QOpenGLWidget):
         self.iniciaJogo = False
         self.nivel = 0
 
-<<<<<<< HEAD
-        self.maxinimigos = 5
-        self.numinimigos = 0
-
-=======
->>>>>>> 2a9ab71ae2a99e96c221dbc3cff9330f7831f170
         self.camera = None
 
         self.jogador = None
@@ -43,8 +32,7 @@ class XInvaders(QOpenGLWidget):
         self.estrelas = []
         self.inimigos = []
 
-        self.jogador = Nave(65, 72, 0, py(-45), Nave.Tipos.JOGADOR)
-        self.cria_objetos()
+        self.inicializa_objetos()
 
         self.musicPlayer = QMediaPlayer()
         app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
@@ -100,7 +88,6 @@ class XInvaders(QOpenGLWidget):
         for estrela in self.estrelas:       estrela.desenha()
         for inimigo in self.inimigos:       inimigo.desenha()
         for tiro in self.tiros:             tiro.desenha()
-
         self.jogador.desenha()
 
         self.detecta_colisoes()
@@ -137,11 +124,6 @@ class XInvaders(QOpenGLWidget):
         if event.key() == Qt.Key_Up:    self.jogador.cima = False
         if event.key() == Qt.Key_Down:  self.jogador.baixo = False
 
-<<<<<<< HEAD
-    def cria_objetos(self):
-        while(self.numinimigos < self.maxinimigos):
-            self.inimigos.append(Nave(65, 70, randint(px(-50)+65, px(50)-65), py(50), Nave.Tipos.CAPANGA)); self.numinimigos+=1
-=======
     def toca_musica_fundo(self):
         dir_projeto = os.getcwd() + "/../"
 
@@ -164,7 +146,6 @@ class XInvaders(QOpenGLWidget):
 
     def inicializa_objetos(self):
         self.jogador = Nave(55, 70, self, 0, self.py(-25), Nave.Tipos.JOGADOR)
->>>>>>> 2a9ab71ae2a99e96c221dbc3cff9330f7831f170
         # TODO inicializar objetos
 
     def detecta_colisoes(self):
