@@ -8,13 +8,13 @@ class Tiro:
     Representa um tiro de qualquer nave
     """
 
-    def __init__(self, largura, altura, x, y, jogo, orientacao, trajetoria: Trajetoria):
+    def __init__(self, largura, altura, x, y, jogo, tipo, trajetoria: Trajetoria):
         self.largura = largura
         self.altura = altura
         self.x = x
         self.y = y
         self.jogo = jogo
-        self.orientacao = orientacao
+        self.tipo = tipo
         self.trajetoria = trajetoria
 
         self.velocidade = 15
@@ -22,7 +22,10 @@ class Tiro:
 
     def desenha(self):
         # TODO colocar textura no tiro
-        glColor4f(1, 1, 1, 1)
+        if self.tipo == 1:
+            glColor4f(0.5, 1, 0.5, 1)
+        else :
+            glColor4f(1, 0.5, 0.5, 1)
 
         self.move()
 
@@ -40,7 +43,7 @@ class Tiro:
             self.visivel = False
 
     def move(self):
-        if self.orientacao == 1:
+        if self.tipo == 1:
             self.x, self.y = self.trajetoria.proximo(self.velocidade)
         else:
             self.x, self.y = self.trajetoria.anterior(self.velocidade)

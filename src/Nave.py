@@ -102,7 +102,7 @@ class Nave(QObject):
                              self.y + self.altura / 2 + 15,
                              self.jogo,
                              0,
-                             TrajetoriaLinear(0, self.y, self.x - self.largura / 2, True))
+                             TrajetoriaLinear(0, (self.y - self.altura / 2 + 15), self.x - self.largura / 2, True))
                 self.jogo.tiros.append(tiro)
                 self.tiro1 = False
             else:
@@ -111,7 +111,7 @@ class Nave(QObject):
                              self.y + self.altura / 2 + 15,
                              self.jogo,
                              0,
-                             TrajetoriaLinear(0, self.y, self.x + self.largura / 2, True))
+                             TrajetoriaLinear(0, (self.y - self.altura / 2 + 15), self.x + self.largura / 2, True))
                 self.jogo.tiros.append(tiro)
                 self.tiro1 = True
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()

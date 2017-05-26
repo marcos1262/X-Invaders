@@ -139,10 +139,10 @@ class XInvaders(QOpenGLWidget):
 
         if self.iniciaJogo:
             arquivo = "sounds/fundo_jogo.mp3"
-            tempo = 72000
+            tempo = 208800
         else:
             arquivo = "sounds/fundo_menu.mp3"
-            tempo = 163000
+            tempo = 67200
 
         url = QUrl().fromLocalFile(dir_projeto + arquivo)
         media = QMediaContent(url)
