@@ -11,6 +11,7 @@ from Nave import Nave
 from XInvadersUi import Ui_MainWindow
 from CameraOrtogonal import CameraOrtogonal
 
+from Trajetoria import TrajetoriaLinear
 
 class XInvaders(QOpenGLWidget):
     """
@@ -33,7 +34,7 @@ class XInvaders(QOpenGLWidget):
         self.estrelas = []
         self.inimigos = []
 
-        self.jogador = Nave(55, 70, self, 0, self.py(-25), Nave.Tipos.JOGADOR)
+        self.jogador = Nave(55, 70, self, 0, self.py(-25), None, Nave.Tipos.JOGADOR)
 
         self.spawner = QTimer()
         self.spawner.timeout.connect(self.cria_objetos)
@@ -122,12 +123,14 @@ class XInvaders(QOpenGLWidget):
         if event.key() == Qt.Key_Right: self.jogador.direita = True
         if event.key() == Qt.Key_Up:    self.jogador.cima = True
         if event.key() == Qt.Key_Down:  self.jogador.baixo = True
+        # if event.key() == Qt.Key_Space:  self.jogador.atirando = True
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Left:  self.jogador.esquerda = False
         if event.key() == Qt.Key_Right: self.jogador.direita = False
         if event.key() == Qt.Key_Up:    self.jogador.cima = False
         if event.key() == Qt.Key_Down:  self.jogador.baixo = False
+        # if event.key() == Qt.Key_Space:  self.jogador.atirando = False
 
     def toca_musica_fundo(self):
         dir_projeto = os.getcwd() + "/../"
@@ -151,7 +154,8 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if randint(0,1):
-            self.inimigos.append(Nave(55, 72, self, randint(self.px(-50)+55,self.px(50)-55), self.py(50), Nave.Tipos.CAPANGA))
+            x_inicial = randint(self.px(-50)+55,self.px(50)-55)
+            self.inimigos.append(Nave(55, 72, self, x_inicial, self.py(55), TrajetoriaLinear(randint(-1,1), self.py(55), x_inicial, True),Nave.Tipos.CAPANGA))
         self.spawner.start(randint(0,3000))
         # TODO inicializar objetos
 

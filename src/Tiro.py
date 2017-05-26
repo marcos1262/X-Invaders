@@ -8,15 +8,16 @@ class Tiro:
     Representa um tiro de qualquer nave
     """
 
-    def __init__(self, largura, altura, x, y, jogo, trajetoria: Trajetoria):
+    def __init__(self, largura, altura, x, y, jogo, orientacao, trajetoria: Trajetoria):
         self.largura = largura
         self.altura = altura
         self.x = x
         self.y = y
         self.jogo = jogo
+        self.orientacao = orientacao
         self.trajetoria = trajetoria
 
-        self.velocidade = 12
+        self.velocidade = 15
         self.visivel = True
 
     def desenha(self):
@@ -39,4 +40,7 @@ class Tiro:
             self.visivel = False
 
     def move(self):
-        self.x, self.y = self.trajetoria.proximo(self.velocidade)
+        if self.orientacao == 1:
+            self.x, self.y = self.trajetoria.proximo(self.velocidade)
+        else:
+            self.x, self.y = self.trajetoria.anterior(self.velocidade)

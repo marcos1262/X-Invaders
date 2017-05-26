@@ -6,7 +6,7 @@ from PyQt5.QtCore import QObject
 from PyQt5.QtMultimedia import QSound
 
 from Tiro import Tiro
-from Trajetoria import TrajetoriaLinear
+from Trajetoria import *
 
 
 class Nave(QObject):
@@ -19,12 +19,13 @@ class Nave(QObject):
         BOSS = 2
         CAPANGA = 3
 
-    def __init__(self, largura, altura, jogo, x, y, tipo=Tipos.CAPANGA):
+    def __init__(self, largura, altura, jogo, x, y, trajetoria : Trajetoria, tipo=Tipos.CAPANGA):
         QObject.__init__(self, jogo)
         self.largura = largura
         self.altura = altura
         self.x = x
         self.y = y
+        self.trajetoria = trajetoria
         self.tipo = tipo
         self.jogo = jogo
 
@@ -35,6 +36,7 @@ class Nave(QObject):
         self.direita = False
         self.cima = False
         self.baixo = False
+        # self.atirando = False
 
         self.startTimer(150)
         self.tiro1 = True
@@ -70,28 +72,54 @@ class Nave(QObject):
             if self.baixo and self.y > -self.jogo.jogoAltura/2 + self.altura / 2:
                 self.y -= self.velocidade
         else:
-            # TODO Mover outros tipos de nave
-            pass
+            self.x, self.y = self.trajetoria.anterior(self.velocidade)
+            # pass
 
     def atira(self):
-        if self.tiro1:
-            tiro = Tiro(3, 25,
-                         self.x - self.largura / 2,
-                         self.y + self.altura / 2 + 15,
-                         self.jogo,
-                         TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x - self.largura / 2, True))
-            self.jogo.tiros.append(tiro)
-            self.tiro1 = False
+        if self.tipo == self.Tipos.JOGADOR:
+            if self.tiro1:
+                tiro = Tiro(3, 25,
+                             self.x - self.largura / 2,
+                             self.y + self.altura / 2 + 15,
+                             self.jogo,
+                             1,
+                             TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x - self.largura / 2, True))
+                self.jogo.tiros.append(tiro)
+                self.tiro1 = False
+            else:
+                tiro = Tiro(3, 25,
+                             self.x + self.largura / 2,
+                             self.y + self.altura / 2 + 15,
+                             self.jogo,
+                             1,
+                             TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x + self.largura / 2, True))
+                self.jogo.tiros.append(tiro)
+                self.tiro1 = True
         else:
-            tiro = Tiro(3, 25,
-                         self.x + self.largura / 2,
-                         self.y + self.altura / 2 + 15,
-                         self.jogo,
-                         TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x + self.largura / 2, True))
-            self.jogo.tiros.append(tiro)
-            self.tiro1 = True
-
+            if self.tiro1:
+                tiro = Tiro(3, 25,
+                             self.x - self.largura / 2,
+                             self.y + self.altura / 2 + 15,
+                             self.jogo,
+                             0,
+                             TrajetoriaLinear(0, self.y, self.x - self.largura / 2, True))
+                self.jogo.tiros.append(tiro)
+                self.tiro1 = False
+            else:
+                tiro = Tiro(3, 25,
+                             self.x + self.largura / 2,
+                             self.y + self.altura / 2 + 15,
+                             self.jogo,
+                             0,
+                             TrajetoriaLinear(0, self.y, self.x + self.largura / 2, True))
+                self.jogo.tiros.append(tiro)
+                self.tiro1 = True
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
     def timerEvent(self, QTimerEvent):
-        if self.jogo.iniciaJogo: self.atira()
+        if self.jogo.iniciaJogo:
+            # if self.tipo == self.Tipos.JOGADOR:
+            #    if self.atirando: self.atira()
+            # else:
+            #    self.atira()
+            self.atira()
