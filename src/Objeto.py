@@ -1,21 +1,19 @@
-from abc import ABC, abstractmethod
 import math
 
-class Objeto(ABC):
+from PyQt5.QtCore import QObject
+
+
+class Objeto(QObject):
     largura = 0
     altura = 0
     x = 0
     y = 0
 
-    @abstractmethod
     def desenha(self):
         pass
 
-
-    @abstractmethod
     def move(self):
         pass
-
 
     def colidiu(self, objeto):
         d = math.sqrt((objeto.x - self.x)**2 + (objeto.y - self.y)**2)

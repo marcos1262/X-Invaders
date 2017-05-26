@@ -5,11 +5,12 @@ from OpenGL.GL import *
 from PyQt5.QtCore import QObject
 from PyQt5.QtMultimedia import QSound
 
+from Objeto import Objeto
 from Tiro import Tiro
 from Trajetoria import *
 
 
-class Nave(QObject):
+class Nave(Objeto):
     """
     Representa todo tipo de nave.
     """

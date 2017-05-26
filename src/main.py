@@ -36,12 +36,12 @@ class XInvaders(QOpenGLWidget):
 
         self.jogador = Nave(55, 70, self, 0, self.py(-25), None, Nave.Tipos.JOGADOR)
 
+        self.musicPlayer = QMediaPlayer()
+        app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
+
         self.spawner = QTimer()
         self.spawner.timeout.connect(self.cria_objetos)
         self.cria_objetos()
-
-        self.musicPlayer = QMediaPlayer()
-        app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
 
         self.timerMusicaFundo = QTimer()
         self.timerMusicaFundo.timeout.connect(self.toca_musica_fundo)
@@ -160,8 +160,24 @@ class XInvaders(QOpenGLWidget):
         # TODO inicializar objetos
 
     def detecta_colisoes(self):
-        # TODO Verificar colisões, remover da lista de objetos, contabilizar pontuação
-        pass
+        for i in self.inimigos:
+            if self.jogador.colidiu(i):
+                print("MORREEEEEEEU")
+                self.jogador.visivel = False
+                i.visivel = False
+                self.iniciaJogo = False
+                ui.painel_menu.show()
+        for t in self.tiros:
+            if t.tipo == 1:
+                for i in self.inimigos:
+                    if i.colidiu(t):
+                        # TODO diminuir hp
+                        print("ACERTOU INIMIGO")
+                        t.visivel = False
+            elif self.jogador.colidiu(t):
+                # TODO diminuir hp
+                print("ACERTOU JOGADOR")
+                t.visivel = False
 
     def mostra_pontuacao(self):
         # TODO Mostrar pontuação
@@ -185,6 +201,7 @@ class XInvaders(QOpenGLWidget):
 
 
 app = None
+ui = None
 if __name__ == '__main__':
     import sys
 
