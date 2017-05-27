@@ -1,7 +1,7 @@
 import os
 
 from OpenGL.GL import *
-from PIL.Image import Image
+#from PIL.Image import Image
 
 from PyQt5.QtCore import QUrl, Qt, QTimer
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -41,6 +41,7 @@ class XInvaders(QOpenGLWidget):
         self.inimigos = []
 
         self.score = 0
+        self.melhorPontuacao=0
 
         self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
 
@@ -161,17 +162,32 @@ class XInvaders(QOpenGLWidget):
                             TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
                             )
             )
-        self.spawner.start(randint(0, 3000))
+        self.spawner.start(randint(0, 3000-self.nivel*10))
+
+    def encerrar_partida(self):
+        for inimigo in self.inimigos:
+            inimigo.visivel = False
+        for tiro in self.tiros:
+            tiro.visivel = False
+        self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
+        self.iniciaJogo = False
+        if self.score > self.melhorPontuacao:
+            self.melhorPontuacao=self.score
+
+        ui.labelPontos.setText("")
+        ui.ultima.setText("Melhor pontuação: " + str(self.melhorPontuacao))
+        ui.ultima.setText("Última pontuação: " + str(self.score))
+
+        self.score, self.nivel = 0, 0
+        self.jogador.visivel = True
+        ui.painel_menu.show()
 
     def detecta_colisoes(self):
         for i in self.inimigos:
             if self.jogador.colidiu(i):
                 self.jogador.visivel = False
                 i.visivel = False
-                self.iniciaJogo = False
-                self.score = 0
-                self.jogador.visivel = True
-                ui.painel_menu.show()
+                self.encerrar_partida()
         for t in self.tiros:
             if str(type(t.nave)) == "<class 'Nave.NaveJogador'>":
                 for i in self.inimigos:
@@ -180,16 +196,17 @@ class XInvaders(QOpenGLWidget):
                             i.visivel = False
                         i.hp -= 25
                         self.score += 25
+                        if self.score-self.nivel*500 == 500:
+                            self.nivel += 1;
+                            self.jogador.hp = 100
+                            print("Nivel: "+str(self.nivel))
                         t.visivel = False
             elif self.jogador.colidiu(t):
-                if self.jogador.hp - 25 == 0:
+                self.jogador.hp -= 15+self.nivel*5
+                if self.jogador.hp <= 0:
                     self.jogador.visivel = False
-                    self.iniciaJogo = False
-                    self.jogador.hp = 100
-                    self.score = 0
-                    self.jogador.visivel = True
-                    ui.painel_menu.show()
-                self.jogador.hp-=15
+                    self.encerrar_partida()
+                print("HP: "+str(self.jogador.hp))
                 t.visivel = False
 
     def remove_invisiveis(self):
