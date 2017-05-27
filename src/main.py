@@ -220,8 +220,7 @@ class XInvaders(QOpenGLWidget):
             if not tiro.visivel: self.tiros.remove(tiro)
 
     def mostra_pontuacao(self):
-        # TODO Mostrar pontuação
-        pass
+        ui.labelPontos.setText("PONTOS: "+str(self.score))
 
     def px(self, porcentagem):
         """
