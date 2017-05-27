@@ -1,17 +1,19 @@
 import os
 
 from OpenGL.GL import *
+from PIL.Image import Image
 
 from PyQt5.QtCore import QUrl, Qt, QTimer
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import *
 from random import *
 
-from Nave import Nave
+from Nave import NaveJogador, NaveCapanga
 from XInvadersUi import Ui_MainWindow
 from CameraOrtogonal import CameraOrtogonal
 
 from Trajetoria import TrajetoriaLinear
+
 
 class XInvaders(QOpenGLWidget):
     """
@@ -27,6 +29,10 @@ class XInvaders(QOpenGLWidget):
 
         self.camera = None
 
+        self.texturaJogador = None
+        self.texturaCapanga1 = None
+        self.texturaCapanga2 = None
+
         self.jogador = None
         self.boss = None
         self.tiros = []
@@ -34,7 +40,7 @@ class XInvaders(QOpenGLWidget):
         self.estrelas = []
         self.inimigos = []
 
-        self.jogador = Nave(55, 70, self, 0, self.py(-25), None, Nave.Tipos.JOGADOR)
+        self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
 
         self.musicPlayer = QMediaPlayer()
         app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
@@ -81,14 +87,7 @@ class XInvaders(QOpenGLWidget):
             glFlush()
             return
 
-        for asteroide in self.asteroides:
-            if not asteroide.visivel: self.asteroides.remove(asteroide)
-        for estrela in self.estrelas:
-            if not estrela.visivel: self.estrelas.remove(estrela)
-        for inimigo in self.inimigos:
-            if not inimigo.visivel: self.inimigos.remove(inimigo)
-        for tiro in self.tiros:
-            if not tiro.visivel: self.tiros.remove(tiro)
+        self.remove_invisiveis()
 
         for asteroide in self.asteroides:   asteroide.desenha()
         for estrela in self.estrelas:       estrela.desenha()
@@ -148,16 +147,19 @@ class XInvaders(QOpenGLWidget):
         media = QMediaContent(url)
 
         self.musicPlayer.setMedia(media)
-        self.musicPlayer.play()
+        # self.musicPlayer.play()
 
         self.timerMusicaFundo.start(tempo)
 
     def cria_objetos(self):
-        if randint(0,1):
-            x_inicial = randint(self.px(-50)+55,self.px(50)-55)
-            self.inimigos.append(Nave(55, 72, self, x_inicial, self.py(55), TrajetoriaLinear(randint(-1,1), self.py(55), x_inicial, True),Nave.Tipos.CAPANGA))
-        self.spawner.start(randint(0,3000))
-        # TODO inicializar objetos
+        if randint(0, 1):
+            x_inicial = randint(self.px(-50) + 55, self.px(50) - 55)
+            self.inimigos.append(
+                NaveCapanga(self, 55, 72, x_inicial, self.py(55),
+                            TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
+                            )
+            )
+        self.spawner.start(randint(0, 3000))
 
     def detecta_colisoes(self):
         for i in self.inimigos:
@@ -168,7 +170,7 @@ class XInvaders(QOpenGLWidget):
                 self.iniciaJogo = False
                 ui.painel_menu.show()
         for t in self.tiros:
-            if t.tipo == 1:
+            if str(type(t.nave)) == "NaveJogador":
                 for i in self.inimigos:
                     if i.colidiu(t):
                         # TODO diminuir hp
@@ -178,6 +180,16 @@ class XInvaders(QOpenGLWidget):
                 # TODO diminuir hp
                 print("ACERTOU JOGADOR")
                 t.visivel = False
+
+    def remove_invisiveis(self):
+        for asteroide in self.asteroides:
+            if not asteroide.visivel: self.asteroides.remove(asteroide)
+        for estrela in self.estrelas:
+            if not estrela.visivel: self.estrelas.remove(estrela)
+        for inimigo in self.inimigos:
+            if not inimigo.visivel: self.inimigos.remove(inimigo)
+        for tiro in self.tiros:
+            if not tiro.visivel: self.tiros.remove(tiro)
 
     def mostra_pontuacao(self):
         # TODO Mostrar pontuação
@@ -198,6 +210,23 @@ class XInvaders(QOpenGLWidget):
         :return: valor da posição no eixo X da tela
         """
         return self.jogoAltura * porcentagem / 100
+
+    # def carrega_textura(self, arquivo):
+    #     img = Image.open(arquivo)
+    #     img_data = numpy.array(list(img.getdata()), numpy.uint8)
+    #
+    #     texture = glGenTextures(1)
+    #     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    #     glBindTexture(GL_TEXTURE_2D, texture)
+    #
+    #     # Texture parameters are part of the texture object, so you need to
+    #     # specify them only once for a given texture object.
+    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    #     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    #     return texture
 
 
 app = None

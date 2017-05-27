@@ -4,10 +4,6 @@ from PyQt5.QtCore import QObject
 
 
 class Objeto(QObject):
-    largura = 0
-    altura = 0
-    x = 0
-    y = 0
 
     def desenha(self):
         pass

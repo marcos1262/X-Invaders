@@ -1,20 +1,23 @@
 from OpenGL.GL import *
+from PyQt5.QtCore import QObject
 
+from Objeto import Objeto
 from Trajetoria import Trajetoria
 
 
-class Tiro:
+class Tiro(Objeto):
     """
     Representa um tiro de qualquer nave
     """
 
-    def __init__(self, largura, altura, x, y, jogo, tipo, trajetoria: Trajetoria):
+    def __init__(self, jogo, nave, largura, altura, x, y, trajetoria: Trajetoria):
+        QObject.__init__(self, jogo)
+        self.jogo = jogo
+        self.nave = nave
         self.largura = largura
         self.altura = altura
         self.x = x
         self.y = y
-        self.jogo = jogo
-        self.tipo = tipo
         self.trajetoria = trajetoria
 
         self.velocidade = 15
@@ -22,9 +25,9 @@ class Tiro:
 
     def desenha(self):
         # TODO colocar textura no tiro
-        if self.tipo == 1:
+        if str(type(self.nave)) == "<class 'Nave.NaveJogador'>":
             glColor4f(0.5, 1, 0.5, 1)
-        else :
+        else:
             glColor4f(1, 0.5, 0.5, 1)
 
         self.move()
@@ -43,7 +46,7 @@ class Tiro:
             self.visivel = False
 
     def move(self):
-        if self.tipo == 1:
+        if str(type(self.nave)) == "<class 'Nave.NaveJogador'>":
             self.x, self.y = self.trajetoria.proximo(self.velocidade)
         else:
             self.x, self.y = self.trajetoria.anterior(self.velocidade)

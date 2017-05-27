@@ -1,4 +1,4 @@
-from enum import Enum
+from random import randint
 
 from OpenGL.GL import *
 
@@ -15,43 +15,12 @@ class Nave(Objeto):
     Representa todo tipo de nave.
     """
 
-    class Tipos(Enum):
-        JOGADOR = 1
-        BOSS = 2
-        CAPANGA = 3
-
-    def __init__(self, largura, altura, jogo, x, y, trajetoria : Trajetoria, tipo=Tipos.CAPANGA):
-        QObject.__init__(self, jogo)
-        self.largura = largura
-        self.altura = altura
-        self.x = x
-        self.y = y
-        self.trajetoria = trajetoria
-        self.tipo = tipo
-        self.jogo = jogo
-
-        self.velocidade = 10
-        self.visivel = True
-
-        self.esquerda = False
-        self.direita = False
-        self.cima = False
-        self.baixo = False
-        # self.atirando = False
-
-        self.startTimer(150)
-        self.tiro1 = True
+    visivel = True
+    tiro1 = True
 
     def desenha(self):
+        textura = self.define_textura()
         # TODO colocar textura na nave
-        if self.tipo == self.Tipos.JOGADOR:
-            glColor4f(1, 1, 0, 1)
-        elif self.tipo == self.Tipos.BOSS:
-            glColor4f(1, 0, 0, 1)
-        elif self.tipo == self.Tipos.CAPANGA:
-            glColor4f(0, 0, 1, 1)
-        else:
-            glColor4f(1, 1, 1, 1)
 
         self.move()
 
@@ -62,65 +31,101 @@ class Nave(Objeto):
         glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
         glEnd()
 
-    def move(self):
-        if self.tipo == self.Tipos.JOGADOR:
-            if self.esquerda and self.x > -self.jogo.jogoLargura/2 + self.largura / 2:
-                self.x -= self.velocidade
-            if self.direita and self.x < self.jogo.jogoLargura/2 - self.largura / 2:
-                self.x += self.velocidade
-            if self.cima and self.y < self.jogo.jogoAltura/2 - self.altura / 2:
-                self.y += self.velocidade
-            if self.baixo and self.y > -self.jogo.jogoAltura/2 + self.altura / 2:
-                self.y -= self.velocidade
-        else:
-            self.x, self.y = self.trajetoria.anterior(self.velocidade)
-            # pass
+    def timerEvent(self, QTimerEvent):
+        if self.jogo.iniciaJogo: self.atira()
 
     def atira(self):
-        if self.tipo == self.Tipos.JOGADOR:
-            if self.tiro1:
-                tiro = Tiro(3, 25,
-                             self.x - self.largura / 2,
-                             self.y + self.altura / 2 + 15,
-                             self.jogo,
-                             1,
-                             TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x - self.largura / 2, True))
-                self.jogo.tiros.append(tiro)
-                self.tiro1 = False
-            else:
-                tiro = Tiro(3, 25,
-                             self.x + self.largura / 2,
-                             self.y + self.altura / 2 + 15,
-                             self.jogo,
-                             1,
-                             TrajetoriaLinear(0, (self.y + self.altura / 2 + 15), self.x + self.largura / 2, True))
-                self.jogo.tiros.append(tiro)
-                self.tiro1 = True
+        pass
+
+    def define_textura(self):
+        pass
+
+
+class NaveJogador(Nave):
+
+    def __init__(self, jogo, largura, altura, x, y):
+        QObject.__init__(self, jogo)
+        self.jogo = jogo
+        self.largura = largura
+        self.altura = altura
+        self.x = x
+        self.y = y
+
+        self.velocidade = 10
+
+        self.esquerda = False
+        self.direita = False
+        self.cima = False
+        self.baixo = False
+
+        self.startTimer(150)
+
+    def define_textura(self):
+        glColor4f(1, 1, 0, 1)
+        return self.jogo.texturaJogador
+
+    def move(self):
+        if self.esquerda and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
+            self.x -= self.velocidade
+        if self.direita and self.x < self.jogo.jogoLargura / 2 - self.largura / 2:
+            self.x += self.velocidade
+        if self.cima and self.y < self.jogo.jogoAltura / 2 - self.altura / 2:
+            self.y += self.velocidade
+        if self.baixo and self.y > -self.jogo.jogoAltura / 2 + self.altura / 2:
+            self.y -= self.velocidade
+
+    def atira(self):
+        if not self.tiro1:
+            x = self.x - self.largura / 2
+            self.tiro1 = True
         else:
-            if self.tiro1:
-                tiro = Tiro(3, 25,
-                             self.x - self.largura / 2,
-                             self.y + self.altura / 2 + 15,
-                             self.jogo,
-                             0,
-                             TrajetoriaLinear(0, (self.y - self.altura / 2 + 15), self.x - self.largura / 2, True))
-                self.jogo.tiros.append(tiro)
-                self.tiro1 = False
-            else:
-                tiro = Tiro(3, 25,
-                             self.x + self.largura / 2,
-                             self.y + self.altura / 2 + 15,
-                             self.jogo,
-                             0,
-                             TrajetoriaLinear(0, (self.y - self.altura / 2 + 15), self.x + self.largura / 2, True))
-                self.jogo.tiros.append(tiro)
-                self.tiro1 = True
+            x = self.x + self.largura / 2
+            self.tiro1 = False
+        y = self.y + self.altura / 2 + 15
+        trajetoria = TrajetoriaLinear(0, y, x, True)
+
+        tiro = Tiro(self.jogo, self, 3, 25, x, y, trajetoria)
+        self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
-    def timerEvent(self, QTimerEvent):
-        if self.jogo.iniciaJogo:
-            # if self.tipo == self.Tipos.JOGADOR:
-            #    if self.atirando: self.atira()
-            # else:
-            #    self.atira()
-            self.atira()
+
+class NaveCapanga(Nave):
+
+    def __init__(self, jogo, largura, altura, x, y, trajetoria: Trajetoria):
+        QObject.__init__(self, jogo)
+        self.jogo = jogo
+        self.largura = largura
+        self.altura = altura
+        self.x = x
+        self.y = y
+        self.trajetoria = trajetoria
+
+        self.velocidade = 5
+
+        self.startTimer(400)
+
+    def define_textura(self):
+        glColor4f(0, 0, 1, 1)
+        if randint(0, 1):
+            return self.jogo.texturaCapanga1
+        else:
+            return self.jogo.texturaCapanga2
+
+    def move(self):
+        self.x, self.y = self.trajetoria.anterior(self.velocidade)
+
+    def atira(self):
+        largura = 3
+        altura = 25
+        if not self.tiro1:
+            x = self.x - self.largura / 2
+            self.tiro1 = True
+        else:
+            x = self.x + self.largura / 2
+            self.tiro1 = False
+        y = self.y - self.altura / 2 + 15
+        trajetoria = TrajetoriaLinear(0, y, x, True)
+
+        tiro = Tiro(self.jogo, self, largura, altura, x, y, trajetoria)
+        self.jogo.tiros.append(tiro)
+        # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
