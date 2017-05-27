@@ -35,7 +35,6 @@ class XInvaders(QOpenGLWidget):
         self.inimigos = []
 
         self.score = 0
-        self.dificuldade = 0
 
         self.jogador = Nave(55, 70, self, 0, self.py(-25), None, Nave.Tipos.JOGADOR)
 
@@ -160,7 +159,7 @@ class XInvaders(QOpenGLWidget):
         if randint(0,1)*self.iniciaJogo:
             x_inicial = randint(self.px(-50)+55,self.px(50)-55)
             self.inimigos.append(Nave(55, 72, self, x_inicial, self.py(55), TrajetoriaLinear(randint(-1,1), self.py(55), x_inicial, True),Nave.Tipos.CAPANGA))
-        self.spawner.start(randint(0,3000-self.dificuldade*10))
+        self.spawner.start(randint(0,3000))
         # TODO inicializar objetos
 
     def detecta_colisoes(self):
@@ -171,7 +170,6 @@ class XInvaders(QOpenGLWidget):
                 i.visivel = False
                 self.iniciaJogo = False
                 self.score = 0
-                self.dificuldade = 0
                 self.jogador.visivel = True
                 ui.painel_menu.show()
         for t in self.tiros:
@@ -183,21 +181,17 @@ class XInvaders(QOpenGLWidget):
                         print("ACERTOU INIMIGO")
                         i.hp -= 25
                         self.score += 25
-                        if self.score-self.dificuldade*100 == 100:
-                            self.dificuldade += 1
-                            self.jogador.hp = 100
                         t.visivel = False
             elif self.jogador.colidiu(t):
-                if self.jogador.hp-25+self.dificuldade==0:
+                if self.jogador.hp - 25 == 0:
                     self.jogador.visivel = False
                     self.iniciaJogo = False
-                    self.jogador.hp=100
-                    self.score=0
-                    self.dificuldade = 0
+                    self.jogador.hp = 100
+                    self.score = 0
                     self.jogador.visivel = True
                     ui.painel_menu.show()
                 print("ACERTOU JOGADOR")
-                self.jogador.hp-=15+self.dificuldade*5
+                self.jogador.hp-=15
                 t.visivel = False
 
     def mostra_pontuacao(self):
