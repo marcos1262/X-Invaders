@@ -17,6 +17,7 @@ class Nave(Objeto):
 
     visivel = True
     tiro1 = True
+    hp = 100
 
     def desenha(self):
         textura = self.define_textura()
@@ -52,8 +53,6 @@ class NaveJogador(Nave):
         self.y = y
 
         self.velocidade = 10
-        self.hp = 100
-        self.visivel = True
 
         self.esquerda = False
         self.direita = False
@@ -86,7 +85,7 @@ class NaveJogador(Nave):
         y = self.y + self.altura / 2 + 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self.jogo, self, 3, 25, x, y, trajetoria)
+        tiro = Tiro(self, 3, 25, x, y, trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
@@ -117,17 +116,15 @@ class NaveCapanga(Nave):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
 
     def atira(self):
-        largura = 3
-        altura = 25
         if not self.tiro1:
             x = self.x - self.largura / 2
             self.tiro1 = True
         else:
             x = self.x + self.largura / 2
             self.tiro1 = False
-        y = self.y - self.altura / 2 + 15
+        y = self.y - self.altura / 2 - 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self.jogo, self, largura, altura, x, y, trajetoria)
+        tiro = Tiro(self, 3, 25, x, y, trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()

@@ -10,9 +10,9 @@ class Tiro(Objeto):
     Representa um tiro de qualquer nave
     """
 
-    def __init__(self, jogo, nave, largura, altura, x, y, trajetoria: Trajetoria):
-        QObject.__init__(self, jogo)
-        self.jogo = jogo
+    def __init__(self, nave, largura, altura, x, y, trajetoria: Trajetoria):
+        QObject.__init__(self, nave.jogo)
+        self.jogo = nave.jogo
         self.nave = nave
         self.largura = largura
         self.altura = altura

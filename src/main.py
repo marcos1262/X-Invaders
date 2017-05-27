@@ -166,7 +166,6 @@ class XInvaders(QOpenGLWidget):
     def detecta_colisoes(self):
         for i in self.inimigos:
             if self.jogador.colidiu(i):
-                print("MORREEEEEEEU")
                 self.jogador.visivel = False
                 i.visivel = False
                 self.iniciaJogo = False
@@ -174,12 +173,11 @@ class XInvaders(QOpenGLWidget):
                 self.jogador.visivel = True
                 ui.painel_menu.show()
         for t in self.tiros:
-            if str(type(t.nave)) == "NaveJogador":
+            if str(type(t.nave)) == "<class 'Nave.NaveJogador'>":
                 for i in self.inimigos:
                     if i.colidiu(t):
                         if i.hp - 25 == 0:
                             i.visivel = False
-                        print("ACERTOU INIMIGO")
                         i.hp -= 25
                         self.score += 25
                         t.visivel = False
@@ -191,7 +189,6 @@ class XInvaders(QOpenGLWidget):
                     self.score = 0
                     self.jogador.visivel = True
                     ui.painel_menu.show()
-                print("ACERTOU JOGADOR")
                 self.jogador.hp-=15
                 t.visivel = False
 
