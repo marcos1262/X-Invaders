@@ -31,6 +31,7 @@ class Nave(Objeto):
         self.jogo = jogo
 
         self.velocidade = 10
+        self.hp = 100
         self.visivel = True
 
         self.esquerda = False
@@ -103,7 +104,7 @@ class Nave(Objeto):
                              self.y + self.altura / 2 + 15,
                              self.jogo,
                              0,
-                             TrajetoriaLinear(0, (self.y - self.altura / 2 + 15), self.x - self.largura / 2, True))
+                             TrajetoriaLinear(0, (self.y - self.altura / 2 - 15), self.x - self.largura / 2, True))
                 self.jogo.tiros.append(tiro)
                 self.tiro1 = False
             else:
@@ -112,13 +113,13 @@ class Nave(Objeto):
                              self.y + self.altura / 2 + 15,
                              self.jogo,
                              0,
-                             TrajetoriaLinear(0, (self.y - self.altura / 2 + 15), self.x + self.largura / 2, True))
+                             TrajetoriaLinear(0, (self.y - self.altura / 2 - 15), self.x + self.largura / 2, True))
                 self.jogo.tiros.append(tiro)
                 self.tiro1 = True
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
     def timerEvent(self, QTimerEvent):
-        if self.jogo.iniciaJogo:
+        if self.jogo.iniciaJogo*self.visivel:
             # if self.tipo == self.Tipos.JOGADOR:
             #    if self.atirando: self.atira()
             # else:
