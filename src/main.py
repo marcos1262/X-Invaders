@@ -40,6 +40,8 @@ class XInvaders(QOpenGLWidget):
         self.estrelas = []
         self.inimigos = []
 
+        self.score = 0
+
         self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
 
         self.musicPlayer = QMediaPlayer()
@@ -147,12 +149,12 @@ class XInvaders(QOpenGLWidget):
         media = QMediaContent(url)
 
         self.musicPlayer.setMedia(media)
-        # self.musicPlayer.play()
+        self.musicPlayer.play()
 
         self.timerMusicaFundo.start(tempo)
 
     def cria_objetos(self):
-        if randint(0, 1):
+        if randint(0,1)*self.iniciaJogo:
             x_inicial = randint(self.px(-50) + 55, self.px(50) - 55)
             self.inimigos.append(
                 NaveCapanga(self, 55, 72, x_inicial, self.py(55),
@@ -168,17 +170,29 @@ class XInvaders(QOpenGLWidget):
                 self.jogador.visivel = False
                 i.visivel = False
                 self.iniciaJogo = False
+                self.score = 0
+                self.jogador.visivel = True
                 ui.painel_menu.show()
         for t in self.tiros:
             if str(type(t.nave)) == "NaveJogador":
                 for i in self.inimigos:
                     if i.colidiu(t):
-                        # TODO diminuir hp
+                        if i.hp - 25 == 0:
+                            i.visivel = False
                         print("ACERTOU INIMIGO")
+                        i.hp -= 25
+                        self.score += 25
                         t.visivel = False
             elif self.jogador.colidiu(t):
-                # TODO diminuir hp
+                if self.jogador.hp - 25 == 0:
+                    self.jogador.visivel = False
+                    self.iniciaJogo = False
+                    self.jogador.hp = 100
+                    self.score = 0
+                    self.jogador.visivel = True
+                    ui.painel_menu.show()
                 print("ACERTOU JOGADOR")
+                self.jogador.hp-=15
                 t.visivel = False
 
     def remove_invisiveis(self):

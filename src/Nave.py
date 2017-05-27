@@ -32,7 +32,7 @@ class Nave(Objeto):
         glEnd()
 
     def timerEvent(self, QTimerEvent):
-        if self.jogo.iniciaJogo: self.atira()
+        if self.jogo.iniciaJogo * self.visivel: self.atira()
 
     def atira(self):
         pass
@@ -52,6 +52,8 @@ class NaveJogador(Nave):
         self.y = y
 
         self.velocidade = 10
+        self.hp = 100
+        self.visivel = True
 
         self.esquerda = False
         self.direita = False
