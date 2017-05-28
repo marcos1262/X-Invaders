@@ -20,7 +20,7 @@ class Tiro(Objeto):
         self.y = y
         self.trajetoria = trajetoria
 
-        self.velocidade = 15
+        self.velocidade = nave.velocidade+5
         self.visivel = True
 
     def desenha(self):
