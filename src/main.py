@@ -4,7 +4,7 @@ from OpenGL.GL import *
 #from PIL.Image import Image
 
 from PyQt5.QtCore import QUrl, Qt, QTimer
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWidgets import *
 from random import *
 
@@ -100,10 +100,7 @@ class XInvaders(QOpenGLWidget):
             self.jogador.hp = 100
             print("Nivel: " + str(self.nivel))
 
-        if self.nivel%5 == 0 and self.nivel != 0:
-            self.bossApareceu = True
-
-        if self.bossApareceu: self.boss.desenha()
+        if self.boss is not None: self.boss.desenha()
 
         self.remove_invisiveis()
 
@@ -116,7 +113,7 @@ class XInvaders(QOpenGLWidget):
 
         self.detecta_colisoes()
 
-        self.mostra_pontuacao()
+        self.mostra_status()
 
         # TODO mostrar minitutorial de como jogar (no nível 0)
 
@@ -141,14 +138,14 @@ class XInvaders(QOpenGLWidget):
         if event.key() == Qt.Key_Right: self.jogador.direita = True
         if event.key() == Qt.Key_Up:    self.jogador.cima = True
         if event.key() == Qt.Key_Down:  self.jogador.baixo = True
-        # if event.key() == Qt.Key_Space:  self.jogador.atirando = True
+        if event.key() == Qt.Key_Shift: self.jogador.velocidade = 20
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Left:  self.jogador.esquerda = False
         if event.key() == Qt.Key_Right: self.jogador.direita = False
         if event.key() == Qt.Key_Up:    self.jogador.cima = False
         if event.key() == Qt.Key_Down:  self.jogador.baixo = False
-        # if event.key() == Qt.Key_Space:  self.jogador.atirando = False
+        if event.key() == Qt.Key_Shift: self.jogador.velocidade = 10
 
     def toca_musica_fundo(self):
         dir_projeto = os.getcwd() + "/../"
@@ -171,23 +168,24 @@ class XInvaders(QOpenGLWidget):
         self.timerMusicaFundo.start(tempo)
 
     def cria_objetos(self):
-        if not self.bossApareceu:
-            x_inicial = randint(self.px(-50) + 55, self.px(50) - 55)
-            if randint(0,1)*self.iniciaJogo:
-                self.inimigos.append(
-                    NaveCapanga(self, 55, 72, x_inicial, self.py(55),
-                                TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
-                                )
-                )
-            elif randint(0,5)==5*self.iniciaJogo:
-                lado = randint(50, 60)
-                self.asteroides.append(
-                    Asteroide(self, lado, lado, x_inicial, self.py(55),
-                                TrajetoriaLinear(0, self.py(55), x_inicial, True)
-                                )
-                )
-        else:
-            self.boss = NaveBoss(self, 70, 93, 0, self.py(55), TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
+        if self.boss == None:
+            if self.nivel % 5 == 0 and self.nivel != 0:
+                self.boss = NaveBoss(self, 70, 93, 0, self.py(55), TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
+            else:
+                x_inicial = randint(self.px(-50) + 55, self.px(50) - 55)
+                if randint(0,1)*self.iniciaJogo:
+                    self.inimigos.append(
+                        NaveCapanga(self, 55, 72, x_inicial, self.py(55),
+                                    TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
+                                    )
+                    )
+                elif (randint(0,5)==5)*self.iniciaJogo:
+                    lado = randint(50, 60)
+                    self.asteroides.append(
+                        Asteroide(self, lado, lado, x_inicial, self.py(55),
+                                    TrajetoriaLinear(0, self.py(55), x_inicial, True)
+                                    )
+                    )
         self.spawner.start(randint(0, 3000-self.nivel*10))
 
     def encerrar_partida(self):
@@ -201,20 +199,19 @@ class XInvaders(QOpenGLWidget):
         self.iniciaJogo = False
         if self.score > self.melhorPontuacao:
             self.melhorPontuacao=self.score
-        self.boss = None
+        if self.boss != None: self.boss.visivel = False
         ui.labelPontos.setText("")
+        ui.labelHP.setText("")
+        ui.labelNivel.setText("")
         ui.melhor.setText("Melhor pontuação: " + str(self.melhorPontuacao))
         ui.ultima.setText("Última pontuação: " + str(self.score))
 
         self.score, self.nivel = 0, 0
-        self.jogador.visivel = True
         ui.painel_menu.show()
+        self.jogador.visivel = True
 
     def detecta_colisoes(self):
         if self.boss != None and self.jogador.colidiu(self.boss):
-            self.jogador.visivel = False
-            self.boss.visivel = False
-            self.bossApareceu = False
             self.encerrar_partida()
         for i in self.inimigos:
             if self.jogador.colidiu(i):
@@ -223,14 +220,16 @@ class XInvaders(QOpenGLWidget):
                 self.encerrar_partida()
         for a in self.asteroides:
             if self.jogador.colidiu(a):
+                QSound("../sounds/SFX/Asteroid Crash 2.wav", self).play()
                 self.jogador.visivel = False
                 a.visivel = False
                 self.encerrar_partida()
         for t in self.tiros:
             if str(type(t.nave)) == "<class 'Nave.NaveJogador'>":
                 if self.boss != None and self.boss.colidiu(t):
-                    self.boss.hp -= 25/self.nivel
+                    self.boss.hp -= 10 - self.nivel
                     if self.boss.hp <= 0:
+                        self.nivel+=1
                         self.boss.visivel = False
                     t.visivel = False
                 for i in self.inimigos:
@@ -245,13 +244,14 @@ class XInvaders(QOpenGLWidget):
                         a.hp -= 20
                         if a.hp <= 0:
                             a.visivel = False
+                            QSound("../sounds/SFX/Asteroid Crash 2.wav", self).play()
                         t.visivel = False
             elif self.jogador.colidiu(t):
                 self.jogador.hp -= 15+self.nivel*5
+                QSound("../sounds/SFX/Shield Hit.wav", self).play()
                 if self.jogador.hp <= 0:
                     self.jogador.visivel = False
                     self.encerrar_partida()
-                print("HP: "+str(self.jogador.hp))
                 t.visivel = False
 
     def remove_invisiveis(self):
@@ -263,9 +263,15 @@ class XInvaders(QOpenGLWidget):
             if not inimigo.visivel: self.inimigos.remove(inimigo)
         for tiro in self.tiros:
             if not tiro.visivel: self.tiros.remove(tiro)
+        if self.boss != None and not self.boss.visivel:
+            self.boss.killTimer(0)
+            self.boss = None
 
-    def mostra_pontuacao(self):
-        ui.labelPontos.setText("PONTOS: "+str(self.score))
+    def mostra_status(self):
+        if self.iniciaJogo:
+            ui.labelPontos.setText("PONTOS: "+str(self.score))
+            ui.labelHP.setText("HP: " + "♥"*int(self.jogador.hp/10))
+            ui.labelNivel.setText("NÍVEL: " + str(self.nivel))
 
     def px(self, porcentagem):
         """
