@@ -91,8 +91,20 @@ class Ui_MainWindow(object):
         self.labelPontos.setGeometry(QtCore.QRect(10, 10, 154, 17))
         self.labelPontos.setObjectName("labelPontos")
 
+        self.labelNivel = QtWidgets.QLabel(self.painel_jogo)
+        self.labelNivel.setEnabled(True)
+        self.labelNivel.setGeometry(QtCore.QRect(10, 30, 154, 17))
+        self.labelNivel.setObjectName("labelNivel")
+
+        self.labelHP = QtWidgets.QLabel(self.painel_jogo)
+        self.labelHP.setEnabled(True)
+        self.labelHP.setGeometry(QtCore.QRect(600, 10, 154, 17))
+        self.labelHP.setObjectName("labelHP")
+
         self.jogo.raise_()
         self.labelPontos.raise_()
+        self.labelNivel.raise_()
+        self.labelHP.raise_()
         self.painel_jogo.raise_()
         self.painel_menu.raise_()
         mainWindow.setCentralWidget(self.centralWidget)
@@ -108,6 +120,8 @@ class Ui_MainWindow(object):
         self.melhor.setText(_translate("MainWindow", ""))
         self.ultima.setText(_translate("MainWindow", ""))
         self.labelPontos.setText(_translate("MainWindow", ""))
+        self.labelNivel.setText(_translate("MainWindow", ""))
+        self.labelHP.setText(_translate("MainWindow", ""))
 
     def iniciaJogo(self):
         self.painel_menu.hide()

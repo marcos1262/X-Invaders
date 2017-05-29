@@ -48,8 +48,7 @@ class XInvaders(QOpenGLWidget):
         self.melhorPontuacao=0
 
         self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
-        self.boss = NaveBoss(self, 70, 93, 0, self.py(55), TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
-        self.boss.visivel = False
+        self.boss = None
 
         self.musicPlayer = QMediaPlayer()
         app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
@@ -97,17 +96,14 @@ class XInvaders(QOpenGLWidget):
             return
 
         if self.score - self.nivel * 500 == 500:
-            self.nivel += 1;
+            self.nivel += 1
             self.jogador.hp = 100
             print("Nivel: " + str(self.nivel))
 
         if self.nivel%5 == 0 and self.nivel != 0:
-            self.boss.visivel = True
             self.bossApareceu = True
 
         if self.bossApareceu: self.boss.desenha()
-
-        if not self.boss.visivel: self.bossApareceu = False
 
         self.remove_invisiveis()
 
@@ -190,6 +186,8 @@ class XInvaders(QOpenGLWidget):
                                 TrajetoriaLinear(0, self.py(55), x_inicial, True)
                                 )
                 )
+        else:
+            self.boss = NaveBoss(self, 70, 93, 0, self.py(55), TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
         self.spawner.start(randint(0, 3000-self.nivel*10))
 
     def encerrar_partida(self):
@@ -203,10 +201,9 @@ class XInvaders(QOpenGLWidget):
         self.iniciaJogo = False
         if self.score > self.melhorPontuacao:
             self.melhorPontuacao=self.score
-        self.boss.visivel = False
-        self.boss.hp = 100
+        self.boss = None
         ui.labelPontos.setText("")
-        ui.ultima.setText("Melhor pontuação: " + str(self.melhorPontuacao))
+        ui.melhor.setText("Melhor pontuação: " + str(self.melhorPontuacao))
         ui.ultima.setText("Última pontuação: " + str(self.score))
 
         self.score, self.nivel = 0, 0
@@ -214,9 +211,10 @@ class XInvaders(QOpenGLWidget):
         ui.painel_menu.show()
 
     def detecta_colisoes(self):
-        if self.jogador.colidiu(self.boss):
+        if self.boss != None and self.jogador.colidiu(self.boss):
             self.jogador.visivel = False
             self.boss.visivel = False
+            self.bossApareceu = False
             self.encerrar_partida()
         for i in self.inimigos:
             if self.jogador.colidiu(i):
@@ -230,7 +228,7 @@ class XInvaders(QOpenGLWidget):
                 self.encerrar_partida()
         for t in self.tiros:
             if str(type(t.nave)) == "<class 'Nave.NaveJogador'>":
-                if self.boss.colidiu(t) and self.bossApareceu:
+                if self.boss != None and self.boss.colidiu(t):
                     self.boss.hp -= 25/self.nivel
                     if self.boss.hp <= 0:
                         self.boss.visivel = False
