@@ -23,29 +23,32 @@ class Asteroide(Objeto):
         self.x = x
         self.y = y
         self.trajetoria = trajetoria
+
         self.visivel = True
+
         self.hp = 100
         self.velocidade = 20
-
-    def define_textura(self):
-        glColor4f(0.5, 0.5, 0.5, 1)
-        return self.jogo.texturaAsteroid
+        self.textura = self.jogo.texturaAsteroid
 
     def move(self):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
 
     def desenha(self):
-        textura = self.define_textura()
-        # TODO colocar textura no asteroide
-
         self.move()
 
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.textura)
         glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 1.0)
         glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
+        glTexCoord2f(0.0, 0.0)
         glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
+        glTexCoord2f(1.0, 0.0)
         glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
+        glTexCoord2f(1.0, 1.0)
         glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
         glEnd()
+        glDisable(GL_TEXTURE_2D)
 
         if self.x - self.largura / 2 > self.jogo.jogoLargura \
                 or self.x + self.largura / 2 < -self.jogo.jogoLargura \

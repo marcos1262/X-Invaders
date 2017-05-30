@@ -20,17 +20,21 @@ class Nave(Objeto):
     hp = 100
 
     def desenha(self):
-        textura = self.define_textura()
-        # TODO colocar textura na nave
-
         self.move()
 
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.textura)
         glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 1.0)
         glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
+        glTexCoord2f(0.0, 0.0)
         glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
+        glTexCoord2f(1.0, 0.0)
         glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
+        glTexCoord2f(1.0, 1.0)
         glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
         glEnd()
+        glDisable(GL_TEXTURE_2D)
 
         if self.x - self.largura / 2 > self.jogo.jogoLargura \
                 or self.x + self.largura / 2 < -self.jogo.jogoLargura \
@@ -49,7 +53,6 @@ class Nave(Objeto):
 
 
 class NaveJogador(Nave):
-
     def __init__(self, jogo, largura, altura, x, y):
         QObject.__init__(self, jogo)
         self.jogo = jogo
@@ -59,6 +62,7 @@ class NaveJogador(Nave):
         self.y = y
 
         self.velocidade = 10
+        self.textura = self.jogo.texturaJogador
 
         self.esquerda = False
         self.direita = False
@@ -66,10 +70,6 @@ class NaveJogador(Nave):
         self.baixo = False
 
         self.startTimer(150)
-
-    def define_textura(self):
-        glColor4f(1, 1, 0, 1)
-        return self.jogo.texturaJogador
 
     def move(self):
         if self.esquerda and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
@@ -91,13 +91,12 @@ class NaveJogador(Nave):
         y = self.y + self.altura / 2 + 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 3, 25, x, y, trajetoria)
+        tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro1, trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
 
 class NaveCapanga(Nave):
-
     def __init__(self, jogo, largura, altura, x, y, trajetoria: Trajetoria):
         QObject.__init__(self, jogo)
         self.jogo = jogo
@@ -107,16 +106,13 @@ class NaveCapanga(Nave):
         self.y = y
         self.trajetoria = trajetoria
 
-        self.velocidade = 5+self.jogo.nivel
-
-        self.startTimer(400-self.jogo.nivel*50)
-
-    def define_textura(self):
-        glColor4f(0, 0, 1, 1)
+        self.velocidade = 5 + self.jogo.nivel
         if randint(0, 1):
-            return self.jogo.texturaCapanga1
+            self.textura = self.jogo.texturaCapanga1
         else:
-            return self.jogo.texturaCapanga2
+            self.textura = self.jogo.texturaCapanga2
+
+        self.startTimer(400 - self.jogo.nivel * 50)
 
     def move(self):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
@@ -131,12 +127,12 @@ class NaveCapanga(Nave):
         y = self.y - self.altura / 2 - 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 3, 25, x, y, trajetoria)
+        tiro = Tiro(self, 15, 40, x, y, self.jogo.texturaTiro2,  trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
-class NaveBoss(Nave):
 
+class NaveBoss(Nave):
     def __init__(self, jogo, largura, altura, x, y, trajetoria: Trajetoria):
         QObject.__init__(self, jogo)
         self.jogo = jogo
@@ -147,12 +143,9 @@ class NaveBoss(Nave):
         self.trajetoria = trajetoria
 
         self.velocidade = 2
+        self.textura = self.jogo.texturaBoss
 
-        self.startTimer(300-self.jogo.nivel*50)
-
-    def define_textura(self):
-        glColor4f(0, 1, 0, 1)
-        return self.jogo.texturaBoss
+        self.startTimer(300 - self.jogo.nivel * 50)
 
     def move(self):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
@@ -167,6 +160,6 @@ class NaveBoss(Nave):
         y = self.y - self.altura / 2 - 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 3, 25, x, y, trajetoria)
+        tiro = Tiro(self, 3, 25, x, y, self.jogo.texturaTiro3,  trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()

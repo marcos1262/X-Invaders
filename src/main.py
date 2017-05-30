@@ -1,7 +1,7 @@
 import os
 
 from OpenGL.GL import *
-#from PIL.Image import Image
+from PIL import Image
 
 from PyQt5.QtCore import QUrl, Qt, QTimer
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QSound
@@ -31,11 +31,14 @@ class XInvaders(QOpenGLWidget):
 
         self.camera = None
 
-        self.texturaJogador = None
-        self.texturaCapanga1 = None
-        self.texturaCapanga2 = None
-        self.texturaBoss = None
-        self.texturaAsteroid = None
+        self.texturaJogador = 1
+        self.texturaCapanga1 = 2
+        self.texturaCapanga2 = 3
+        self.texturaBoss = 4
+        self.texturaAsteroid = 5
+        self.texturaTiro1 = 6
+        self.texturaTiro2 = 7
+        self.texturaTiro3 = 8
 
         self.jogador = None
         self.boss = None
@@ -45,9 +48,9 @@ class XInvaders(QOpenGLWidget):
         self.inimigos = []
 
         self.score = 0
-        self.melhorPontuacao=0
+        self.melhorPontuacao = 0
 
-        self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
+        self.jogador = NaveJogador(self, 55, 65.7, 0, self.py(-25))
         self.boss = None
 
         self.musicPlayer = QMediaPlayer()
@@ -81,6 +84,15 @@ class XInvaders(QOpenGLWidget):
 
         self.camera = CameraOrtogonal(self.jogoLargura, self.jogoAltura, True)
 
+        self.carrega_textura("../images/Spacecrafts/Tie_Interceptor_01.png", self.texturaJogador)
+        self.carrega_textura("../images/Spacecrafts/E_Y-Wing.png", self.texturaCapanga1)
+        self.carrega_textura("../images/Spacecrafts/X-Wing_Top_View.png", self.texturaCapanga2)
+        self.carrega_textura("../images/Spacecrafts/UpperHull.png", self.texturaBoss)
+        self.carrega_textura("../images/asteroid-icon.png", self.texturaAsteroid)
+        self.carrega_textura("../images/beams/tiiro.png", self.texturaTiro1)
+        self.carrega_textura("../images/beams/Blue_laser.png", self.texturaTiro2)
+        self.carrega_textura("../images/beams/laser-red.png", self.texturaTiro3)
+
     def paintGL(self):
         """
         Desenha a cena.
@@ -98,7 +110,6 @@ class XInvaders(QOpenGLWidget):
         if self.score - self.nivel * 500 == 500:
             self.nivel += 1
             self.jogador.hp = 100
-            print("Nivel: " + str(self.nivel))
 
         if self.boss is not None: self.boss.desenha()
 
@@ -169,24 +180,25 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if self.boss == None:
-            if self.nivel % 5 == 0 and self.nivel != 0:
-                self.boss = NaveBoss(self, 70, 93, 0, self.py(55), TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
+            if self.nivel % 2 == 0 and self.nivel != 0:
+                self.boss = NaveBoss(self, 70, 93, 0, self.py(55),
+                                     TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
             else:
                 x_inicial = randint(self.px(-50) + 55, self.px(50) - 55)
-                if randint(0,1)*self.iniciaJogo:
+                if randint(0, 1) * self.iniciaJogo:
                     self.inimigos.append(
                         NaveCapanga(self, 55, 72, x_inicial, self.py(55),
                                     TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
                                     )
                     )
-                elif (randint(0,5)==5)*self.iniciaJogo:
+                elif (randint(0, 5) == 5) * self.iniciaJogo:
                     lado = randint(50, 60)
                     self.asteroides.append(
                         Asteroide(self, lado, lado, x_inicial, self.py(55),
-                                    TrajetoriaLinear(0, self.py(55), x_inicial, True)
-                                    )
+                                  TrajetoriaLinear(0, self.py(55), x_inicial, True)
+                                  )
                     )
-        self.spawner.start(randint(0, 3000-self.nivel*10))
+        self.spawner.start(randint(0, 3000 - self.nivel * 10))
 
     def encerrar_partida(self):
         for inimigo in self.inimigos:
@@ -198,7 +210,7 @@ class XInvaders(QOpenGLWidget):
         self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
         self.iniciaJogo = False
         if self.score > self.melhorPontuacao:
-            self.melhorPontuacao=self.score
+            self.melhorPontuacao = self.score
         if self.boss != None: self.boss.visivel = False
         ui.labelPontos.setText("")
         ui.labelHP.setText("")
@@ -229,7 +241,7 @@ class XInvaders(QOpenGLWidget):
                 if self.boss != None and self.boss.colidiu(t):
                     self.boss.hp -= 10 - self.nivel
                     if self.boss.hp <= 0:
-                        self.nivel+=1
+                        self.nivel += 1
                         self.boss.visivel = False
                     t.visivel = False
                 for i in self.inimigos:
@@ -247,7 +259,7 @@ class XInvaders(QOpenGLWidget):
                             QSound("../sounds/SFX/Asteroid Crash 2.wav", self).play()
                         t.visivel = False
             elif self.jogador.colidiu(t):
-                self.jogador.hp -= 15+self.nivel*5
+                self.jogador.hp -= 15 + self.nivel * 5
                 QSound("../sounds/SFX/Shield Hit.wav", self).play()
                 if self.jogador.hp <= 0:
                     self.jogador.visivel = False
@@ -269,8 +281,8 @@ class XInvaders(QOpenGLWidget):
 
     def mostra_status(self):
         if self.iniciaJogo:
-            ui.labelPontos.setText("PONTOS: "+str(self.score))
-            ui.labelHP.setText("HP: " + "♥"*int(self.jogador.hp/10))
+            ui.labelPontos.setText("PONTOS: " + str(self.score))
+            ui.labelHP.setText("HP: " + "♥" * int(self.jogador.hp / 10))
             ui.labelNivel.setText("NÍVEL: " + str(self.nivel))
 
     def px(self, porcentagem):
@@ -289,22 +301,22 @@ class XInvaders(QOpenGLWidget):
         """
         return self.jogoAltura * porcentagem / 100
 
-    # def carrega_textura(self, arquivo):
-    #     img = Image.open(arquivo)
-    #     img_data = numpy.array(list(img.getdata()), numpy.uint8)
-    #
-    #     texture = glGenTextures(1)
-    #     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    #     glBindTexture(GL_TEXTURE_2D, texture)
-    #
-    #     # Texture parameters are part of the texture object, so you need to
-    #     # specify them only once for a given texture object.
-    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-    #     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-    #     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
-    #     return texture
+    def carrega_textura(self, arquivo, id):
+        img = Image.open(arquivo).transpose(Image.ROTATE_90)
+        img_data = img.tobytes("raw", "RGBA", 0, -1)
+
+        glGenTextures(1, id)
+
+        glBindTexture(GL_TEXTURE_2D, id)
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+
+        # Texture parameters are part of the texture object, so you need to
+        # specify them only once for a given texture object.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.size[0], img.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
 
 
 app = None

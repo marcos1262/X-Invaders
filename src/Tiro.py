@@ -10,7 +10,7 @@ class Tiro(Objeto):
     Representa um tiro de qualquer nave
     """
 
-    def __init__(self, nave, largura, altura, x, y, trajetoria: Trajetoria):
+    def __init__(self, nave, largura, altura, x, y, textura, trajetoria: Trajetoria):
         QObject.__init__(self, nave.jogo)
         self.jogo = nave.jogo
         self.nave = nave
@@ -19,6 +19,7 @@ class Tiro(Objeto):
         self.x = x
         self.y = y
         self.trajetoria = trajetoria
+        self.textura = textura
 
         self.velocidade = nave.velocidade+5
         self.visivel = True
@@ -32,12 +33,19 @@ class Tiro(Objeto):
 
         self.move()
 
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.textura)
         glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 1.0)
         glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
+        glTexCoord2f(0.0, 0.0)
         glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
+        glTexCoord2f(1.0, 0.0)
         glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
+        glTexCoord2f(1.0, 1.0)
         glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
         glEnd()
+        glDisable(GL_TEXTURE_2D)
 
         if self.x - self.largura / 2 > self.jogo.jogoLargura / 2 \
                 or self.x + self.largura / 2 < -self.jogo.jogoLargura / 2 \
