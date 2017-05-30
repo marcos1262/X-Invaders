@@ -14,6 +14,7 @@ from XInvadersUi import Ui_MainWindow
 from CameraOrtogonal import CameraOrtogonal
 
 from Trajetoria import TrajetoriaLinear
+from Trajetoria import TrajetoriaSenoide
 
 
 class XInvaders(QOpenGLWidget):
@@ -84,14 +85,15 @@ class XInvaders(QOpenGLWidget):
 
         self.camera = CameraOrtogonal(self.jogoLargura, self.jogoAltura, True)
 
-        self.carrega_textura("../images/Spacecrafts/Tie_Interceptor_01.png", self.texturaJogador)
-        self.carrega_textura("../images/Spacecrafts/E_Y-Wing.png", self.texturaCapanga1)
-        self.carrega_textura("../images/Spacecrafts/X-Wing_Top_View.png", self.texturaCapanga2)
-        self.carrega_textura("../images/Spacecrafts/UpperHull.png", self.texturaBoss)
-        self.carrega_textura("../images/asteroid-icon.png", self.texturaAsteroid)
-        self.carrega_textura("../images/beams/tiiro.png", self.texturaTiro1)
-        self.carrega_textura("../images/beams/Blue_laser.png", self.texturaTiro2)
-        self.carrega_textura("../images/beams/laser-red.png", self.texturaTiro3)
+        self.carrega_textura("../images/Spacecrafts/tie-figher.png", self.texturaJogador)
+        self.carrega_textura("../images/Spacecrafts/y-wing.png", self.texturaCapanga1)
+        self.carrega_textura("../images/Spacecrafts/x-wing.png", self.texturaCapanga2)
+        self.carrega_textura("../images/Spacecrafts/falcon.png", self.texturaBoss)
+        self.carrega_textura("../images/asteroide.png", self.texturaAsteroid)
+        self.carrega_textura("../images/beams/green-laser.png", self.texturaTiro1)
+        self.carrega_textura("../images/beams/red-laser1.png", self.texturaTiro2)
+        self.carrega_textura("../images/beams/red-laser2.png", self.texturaTiro3)
+        #self.carrega_textura("../images/fundo.png", self.texturaFundo)
 
     def paintGL(self):
         """
@@ -107,7 +109,7 @@ class XInvaders(QOpenGLWidget):
             glFlush()
             return
 
-        if self.score - self.nivel * 500 == 500:
+        if self.score - self.nivel * 500 >= 500:
             self.nivel += 1
             self.jogador.hp = 100
 
@@ -181,18 +183,18 @@ class XInvaders(QOpenGLWidget):
     def cria_objetos(self):
         if self.boss == None:
             if self.nivel % 2 == 0 and self.nivel != 0:
-                self.boss = NaveBoss(self, 70, 93, 0, self.py(55),
-                                     TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
+                self.boss = NaveBoss(self, 80, 103, 0, self.py(55),
+                                     TrajetoriaLinear(randrange(-1, 1), self.py(55), 0, True))
             else:
-                x_inicial = randint(self.px(-50) + 55, self.px(50) - 55)
+                x_inicial = randrange(self.px(-50) + 55, self.px(50) - 55)
                 if randint(0, 1) * self.iniciaJogo:
                     self.inimigos.append(
                         NaveCapanga(self, 55, 72, x_inicial, self.py(55),
-                                    TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
+                                    TrajetoriaLinear(randrange(-1, 1), self.py(55), x_inicial, True)
                                     )
                     )
                 elif (randint(0, 5) == 5) * self.iniciaJogo:
-                    lado = randint(50, 60)
+                    lado = randint(45, 65)
                     self.asteroides.append(
                         Asteroide(self, lado, lado, x_inicial, self.py(55),
                                   TrajetoriaLinear(0, self.py(55), x_inicial, True)
@@ -224,15 +226,20 @@ class XInvaders(QOpenGLWidget):
 
     def detecta_colisoes(self):
         if self.boss != None and self.jogador.colidiu(self.boss):
+            QSound("../sounds/SFX/TIE EXPL.wav", self).play()
+            self.jogador.visivel = False
+            self.boss.visivel = False
             self.encerrar_partida()
         for i in self.inimigos:
             if self.jogador.colidiu(i):
+                QSound("../sounds/SFX/TIE EXPL.wav", self).play()
                 self.jogador.visivel = False
                 i.visivel = False
                 self.encerrar_partida()
         for a in self.asteroides:
             if self.jogador.colidiu(a):
-                QSound("../sounds/SFX/Asteroid Crash 2.wav", self).play()
+                QSound("../sounds/SFX/Asteroid Crash.wav", self).play()
+                QSound("../sounds/SFX/TIE EXPL.wav", self).play()
                 self.jogador.visivel = False
                 a.visivel = False
                 self.encerrar_partida()
@@ -241,14 +248,21 @@ class XInvaders(QOpenGLWidget):
                 if self.boss != None and self.boss.colidiu(t):
                     self.boss.hp -= 10 - self.nivel
                     if self.boss.hp <= 0:
-                        self.nivel += 1
+                        self.score+=500
                         self.boss.visivel = False
+                        QSound("../sounds/SFX/Large Explosion.wav", self).play()
                     t.visivel = False
                 for i in self.inimigos:
                     if i.colidiu(t):
                         i.hp -= 25
                         if i.hp <= 0:
                             i.visivel = False
+                            x = randint(1,5)
+                            if x == 1: QSound("../sounds/SFX/Fighter EXPL 1.wav", self).play()
+                            if x == 2: QSound("../sounds/SFX/Fighter EXPL 2.wav", self).play()
+                            if x == 3 : QSound("../sounds/SFX/Fighter EXPL 3.wav", self).play()
+                            if x == 4: QSound("../sounds/SFX/Fighter EXPL 4.wav", self).play()
+                            else: QSound("../sounds/SFX/Fighter EXPL 5.wav", self).play()
                         self.score += 25
                         t.visivel = False
                 for a in self.asteroides:
@@ -256,12 +270,13 @@ class XInvaders(QOpenGLWidget):
                         a.hp -= 20
                         if a.hp <= 0:
                             a.visivel = False
-                            QSound("../sounds/SFX/Asteroid Crash 2.wav", self).play()
+                            QSound("../sounds/SFX/Asteroid Crash.wav", self).play()
                         t.visivel = False
             elif self.jogador.colidiu(t):
                 self.jogador.hp -= 15 + self.nivel * 5
                 QSound("../sounds/SFX/Shield Hit.wav", self).play()
                 if self.jogador.hp <= 0:
+                    QSound("../sounds/SFX/TIE EXPL.wav", self).play()
                     self.jogador.visivel = False
                     self.encerrar_partida()
                 t.visivel = False

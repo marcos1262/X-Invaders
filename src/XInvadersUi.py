@@ -98,7 +98,7 @@ class Ui_MainWindow(object):
 
         self.labelHP = QtWidgets.QLabel(self.painel_jogo)
         self.labelHP.setEnabled(True)
-        self.labelHP.setGeometry(QtCore.QRect(500, 10, 154, 17))
+        self.labelHP.setGeometry(QtCore.QRect(600, 10, 154, 17))
         self.labelHP.setObjectName("labelHP")
 
         self.jogo.raise_()
