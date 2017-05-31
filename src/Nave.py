@@ -93,7 +93,7 @@ class NaveJogador(Nave):
         y = self.y + self.altura / 2 + 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro1, trajetoria)
+        tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro1, trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
@@ -127,7 +127,7 @@ class NaveCapanga(Nave):
         y = self.y - self.altura / 2 - 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 15, 40, x, y, self.jogo.texturaTiro2,  trajetoria)
+        tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro2,  trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 
@@ -160,6 +160,5 @@ class NaveBoss(Nave):
         y = self.y - self.altura / 2 - 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 3, 25, x, y, self.jogo.texturaTiro3,  trajetoria)
+        tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro3, trajetoria)
         self.jogo.tiros.append(tiro)
-        # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
