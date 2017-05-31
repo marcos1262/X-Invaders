@@ -149,14 +149,26 @@ class XInvaders(QOpenGLWidget):
         if event.key() == Qt.Key_Right: self.jogador.direita = True
         if event.key() == Qt.Key_Up:    self.jogador.cima = True
         if event.key() == Qt.Key_Down:  self.jogador.baixo = True
-        if event.key() == Qt.Key_Shift: self.jogador.velocidade = 20
+        if event.key() == Qt.Key_A:     self.jogador.esquerda = True
+        if event.key() == Qt.Key_D:     self.jogador.direita = True
+        if event.key() == Qt.Key_W:     self.jogador.cima = True
+        if event.key() == Qt.Key_S:     self.jogador.baixo = True
+        if event.key() == Qt.Key_Shift:
+            self.jogador.velocidade = 20
+            self.jogador.taxaTiro = 300
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Left:  self.jogador.esquerda = False
         if event.key() == Qt.Key_Right: self.jogador.direita = False
         if event.key() == Qt.Key_Up:    self.jogador.cima = False
         if event.key() == Qt.Key_Down:  self.jogador.baixo = False
-        if event.key() == Qt.Key_Shift: self.jogador.velocidade = 10
+        if event.key() == Qt.Key_A:     self.jogador.esquerda = False
+        if event.key() == Qt.Key_D:     self.jogador.direita = False
+        if event.key() == Qt.Key_W:     self.jogador.cima = False
+        if event.key() == Qt.Key_S:     self.jogador.baixo = False
+        if event.key() == Qt.Key_Shift:
+            self.jogador.velocidade = 10
+            self.jogador.taxaTiro = 150
 
     def toca_musica_fundo(self):
         dir_projeto = os.getcwd() + "/../"
@@ -179,8 +191,8 @@ class XInvaders(QOpenGLWidget):
         self.timerMusicaFundo.start(tempo)
 
     def cria_objetos(self):
-        if self.boss == None:
-            if self.nivel % 2 == 0 and self.nivel != 0:
+        if self.boss is None:
+            if self.nivel % 5 == 0 and self.nivel != 0:
                 self.boss = NaveBoss(self, 70, 93, 0, self.py(55),
                                      TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
             else:
@@ -198,7 +210,7 @@ class XInvaders(QOpenGLWidget):
                                   TrajetoriaLinear(0, self.py(55), x_inicial, True)
                                   )
                     )
-        self.spawner.start(randint(0, 3000 - self.nivel * 10))
+        self.spawner.start(randint(0, 3000 - self.nivel * 100))
 
     def encerrar_partida(self):
         for inimigo in self.inimigos:
@@ -238,7 +250,7 @@ class XInvaders(QOpenGLWidget):
                 self.encerrar_partida()
         for t in self.tiros:
             if str(type(t.nave)) == "<class 'Nave.NaveJogador'>":
-                if self.boss != None and self.boss.colidiu(t):
+                if self.boss is not None and self.boss.colidiu(t):
                     self.boss.hp -= 10 - self.nivel
                     if self.boss.hp <= 0:
                         self.nivel += 1
@@ -275,7 +287,7 @@ class XInvaders(QOpenGLWidget):
             if not inimigo.visivel: self.inimigos.remove(inimigo)
         for tiro in self.tiros:
             if not tiro.visivel: self.tiros.remove(tiro)
-        if self.boss != None and not self.boss.visivel:
+        if self.boss is not None and not self.boss.visivel:
             self.boss.killTimer(0)
             self.boss = None
 
@@ -306,13 +318,9 @@ class XInvaders(QOpenGLWidget):
         img_data = img.tobytes("raw", "RGBA", 0, -1)
 
         glGenTextures(1, id)
-
         glBindTexture(GL_TEXTURE_2D, id)
-
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
 
-        # Texture parameters are part of the texture object, so you need to
-        # specify them only once for a given texture object.
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.size[0], img.size[1], 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)

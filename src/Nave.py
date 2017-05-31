@@ -69,7 +69,9 @@ class NaveJogador(Nave):
         self.cima = False
         self.baixo = False
 
-        self.startTimer(150)
+        self.taxaTiro = 150
+
+        self.startTimer(self.taxaTiro)
 
     def move(self):
         if self.esquerda and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
@@ -107,12 +109,10 @@ class NaveCapanga(Nave):
         self.trajetoria = trajetoria
 
         self.velocidade = 5 + self.jogo.nivel
-        if randint(0, 1):
-            self.textura = self.jogo.texturaCapanga1
-        else:
-            self.textura = self.jogo.texturaCapanga2
+        if randint(0, 1): self.textura = self.jogo.texturaCapanga1
+        else: self.textura = self.jogo.texturaCapanga2
 
-        self.startTimer(400 - self.jogo.nivel * 50)
+        self.startTimer(400 - self.jogo.nivel * 5)
 
     def move(self):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
@@ -145,7 +145,7 @@ class NaveBoss(Nave):
         self.velocidade = 2
         self.textura = self.jogo.texturaBoss
 
-        self.startTimer(300 - self.jogo.nivel * 50)
+        self.startTimer(300 - self.jogo.nivel * 10)
 
     def move(self):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
