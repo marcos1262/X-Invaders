@@ -2,7 +2,7 @@ from OpenGL.GL import *
 
 
 class CameraOrtogonal:
-    def __init__(self, largura, altura, centro, x=0, y=0, near=-1, far=1):
+    def __init__(self, largura, altura, centro, x=0, y=0, near=-2, far=2):
         self.largura = largura
         self.altura = altura
         self.x = x
