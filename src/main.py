@@ -14,7 +14,6 @@ from XInvadersUi import Ui_MainWindow
 from CameraOrtogonal import CameraOrtogonal
 
 from Trajetoria import TrajetoriaLinear
-from Trajetoria import TrajetoriaSenoide
 
 
 class XInvaders(QOpenGLWidget):
@@ -40,6 +39,7 @@ class XInvaders(QOpenGLWidget):
         self.texturaTiro1 = 6
         self.texturaTiro2 = 7
         self.texturaTiro3 = 8
+        self.texturaFundo = 9
 
         self.jogador = None
         self.boss = None
@@ -76,6 +76,9 @@ class XInvaders(QOpenGLWidget):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
 
+        glEnable(GL_ALPHA_TEST)
+        glAlphaFunc(GL_NOTEQUAL, 0.0)
+
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
 
@@ -93,7 +96,7 @@ class XInvaders(QOpenGLWidget):
         self.carrega_textura("../images/beams/green-laser.png", self.texturaTiro1)
         self.carrega_textura("../images/beams/red-laser1.png", self.texturaTiro2)
         self.carrega_textura("../images/beams/red-laser2.png", self.texturaTiro3)
-        #self.carrega_textura("../images/fundo.png", self.texturaFundo)
+        self.carrega_textura("../images/fundo.jpg", self.texturaFundo)
 
     def paintGL(self):
         """
@@ -103,7 +106,19 @@ class XInvaders(QOpenGLWidget):
         """
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        # TODO Desenha fundo estelar
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(self.jogoLargura / 2, self.jogoAltura / 2, -1)  # superior direito
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(-self.jogoLargura / 2, self.jogoAltura / 2, -1)  # superior esquerdo
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(-self.jogoLargura / 2, -self.jogoAltura / 2, -1)  # inferior esquerdo
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(self.jogoLargura / 2, -self.jogoAltura / 2, -1)  # inferior direito
+        glEnd()
+        glDisable(GL_TEXTURE_2D)
 
         if not self.iniciaJogo:
             glFlush()
@@ -132,16 +147,20 @@ class XInvaders(QOpenGLWidget):
 
         glFlush()
 
-    # TODO ajustar opengl ao redimensionar janela
     # def resizeEvent(self, QResizeEvent):
+    #     ui.painel_jogo.resize(QResizeEvent.size().width(), QResizeEvent.size().height())
+    #     ui.painel_menu.resize(QResizeEvent.size().width(), ui.painel_menu.height())
+    #     ui.verticalLayoutWidget.resize(QResizeEvent.size().width(), ui.painel_menu.height())
     #     self.resize(QResizeEvent.size().width(), QResizeEvent.size().height())
+    #     self.resizeGL(QResizeEvent.size().width(), QResizeEvent.size().height())
     #
-    #     self.jogoLargura = QResizeEvent.size().width()
-    #     self.jogoAltura = QResizeEvent.size().height()
+    # def resizeGL(self, w, h):
+    #     self.jogoLargura = w
+    #     self.jogoAltura = h
     #
     #     glViewport(0, 0, self.jogoLargura, self.jogoAltura)
     #
-    #     if self.camera != None: self.camera.atualiza(self.jogoLargura, self.jogoAltura)
+    #     if self.camera is not None: self.camera.atualiza(self.jogoLargura, self.jogoAltura)
 
     def timerEvent(self, QTimerEvent):
         self.update()
@@ -194,15 +213,15 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if self.boss is None:
-            if self.nivel % 5 == 0 and self.nivel != 0:
+            if self.nivel % 3 == 0 and self.nivel != 0:
                 self.boss = NaveBoss(self, 80, 103, 0, self.py(55),
-                                     TrajetoriaLinear(randrange(-1, 1), self.py(55), 0, True))
+                                     TrajetoriaLinear(randint(-1, 1), self.py(55), 0, randint(0,1)))
             else:
-                x_inicial = randrange(self.px(-50) + 55, self.px(50) - 55)
+                x_inicial = randint(int(self.px(-50)) + 55, int(self.px(50)) - 55)
                 if randint(0, 1) * self.iniciaJogo:
                     self.inimigos.append(
                         NaveCapanga(self, 55, 72, x_inicial, self.py(55),
-                                    TrajetoriaLinear(randrange(-1, 1), self.py(55), x_inicial, True)
+                                    TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
                                     )
                     )
                 elif (randint(0, 5) == 5) * self.iniciaJogo:
@@ -260,7 +279,7 @@ class XInvaders(QOpenGLWidget):
                 if self.boss is not None and self.boss.colidiu(t):
                     self.boss.hp -= 10 - self.nivel
                     if self.boss.hp <= 0:
-                        self.score+=500
+                        self.score += 500
                         self.boss.visivel = False
                         QSound("../sounds/SFX/Large Explosion.wav", self).play()
                     t.visivel = False
@@ -269,12 +288,14 @@ class XInvaders(QOpenGLWidget):
                         i.hp -= 25
                         if i.hp <= 0:
                             i.visivel = False
-                            x = randint(1,5)
+                            x = randint(1, 5)
                             if x == 1: QSound("../sounds/SFX/Fighter EXPL 1.wav", self).play()
                             if x == 2: QSound("../sounds/SFX/Fighter EXPL 2.wav", self).play()
-                            if x == 3 : QSound("../sounds/SFX/Fighter EXPL 3.wav", self).play()
-                            if x == 4: QSound("../sounds/SFX/Fighter EXPL 4.wav", self).play()
-                            else: QSound("../sounds/SFX/Fighter EXPL 5.wav", self).play()
+                            if x == 3: QSound("../sounds/SFX/Fighter EXPL 3.wav", self).play()
+                            if x == 4:
+                                QSound("../sounds/SFX/Fighter EXPL 4.wav", self).play()
+                            else:
+                                QSound("../sounds/SFX/Fighter EXPL 5.wav", self).play()
                         self.score += 25
                         t.visivel = False
                 for a in self.asteroides:
@@ -330,7 +351,10 @@ class XInvaders(QOpenGLWidget):
 
     def carrega_textura(self, arquivo, id):
         img = Image.open(arquivo).transpose(Image.ROTATE_90)
-        img_data = img.tobytes("raw", "RGBA", 0, -1)
+        try:
+            img_data = img.tobytes("raw", "RGBA", 0, -1)
+        except:
+            img_data = img.tobytes("raw", "RGBX", 0, -1)
 
         glGenTextures(1, id)
         glBindTexture(GL_TEXTURE_2D, id)

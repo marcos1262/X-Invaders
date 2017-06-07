@@ -48,9 +48,6 @@ class Nave(Objeto):
     def atira(self):
         pass
 
-    def define_textura(self):
-        pass
-
 
 class NaveJogador(Nave):
     def __init__(self, jogo, largura, altura, x, y):
@@ -142,7 +139,7 @@ class NaveBoss(Nave):
         self.y = y
         self.trajetoria = trajetoria
 
-        self.velocidade = 2
+        self.velocidade = 4
         self.textura = self.jogo.texturaBoss
 
         self.startTimer(300 - self.jogo.nivel * 10)

@@ -15,6 +15,7 @@ class Ui_MainWindow(object):
         mainWindow.resize(700, 700)
         self.centralWidget = QtWidgets.QWidget(mainWindow)
         self.centralWidget.setObjectName("centralWidget")
+        # self.centralWidget.resizeEvent = (self.resizeEvent)
 
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
@@ -98,7 +99,7 @@ class Ui_MainWindow(object):
 
         self.labelHP = QtWidgets.QLabel(self.painel_jogo)
         self.labelHP.setEnabled(True)
-        self.labelHP.setGeometry(QtCore.QRect(600, 10, 154, 17))
+        self.labelHP.setGeometry(QtCore.QRect(550, 10, 154, 17))
         self.labelHP.setObjectName("labelHP")
 
         self.jogo.raise_()
@@ -110,6 +111,9 @@ class Ui_MainWindow(object):
         mainWindow.setCentralWidget(self.centralWidget)
         self.retranslateUi(mainWindow)
         QtCore.QMetaObject.connectSlotsByName(mainWindow)
+
+    # def resizeEvent(self, QResizeEvent):
+    #     self.jogo.resizeEvent(QResizeEvent)
 
     def retranslateUi(self, mainWindow):
         _translate = QtCore.QCoreApplication.translate
