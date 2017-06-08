@@ -73,6 +73,44 @@ class NaveJogador(Nave):
 
         self.startTimer(self.taxaTiro)
 
+    def desenha(self):
+        self.move()
+
+        color = [1.0, 1.0, 1.0, 1.0]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+
+        glBegin(GL_TRIANGLES)
+
+        glVertex3f(self.x, self.y, 30)  # superior
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+
+        color = [0, 1, 0, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+
+        color = [0, 0, 1, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x, self.y, 30)  # superior
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
+        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+        color = [1, 0, 0, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x, self.y, 30)  # superior
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+        glEnd()
+
+        if self.x - self.largura / 2 > self.jogo.jogoLargura \
+                or self.x + self.largura / 2 < -self.jogo.jogoLargura \
+                or self.y - self.largura / 2 > self.jogo.jogoAltura \
+                or self.y + self.largura / 2 < -self.jogo.jogoAltura:
+            self.visivel = False
+
     def move(self):
         if self.esquerda and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
             self.x -= self.velocidade
@@ -109,8 +147,10 @@ class NaveCapanga(Nave):
         self.trajetoria = trajetoria
 
         self.velocidade = 5 + self.jogo.nivel
-        if randint(0, 1): self.textura = self.jogo.texturaCapanga1
-        else: self.textura = self.jogo.texturaCapanga2
+        if randint(0, 1):
+            self.textura = self.jogo.texturaCapanga1
+        else:
+            self.textura = self.jogo.texturaCapanga2
 
         self.startTimer(400 - self.jogo.nivel * 5)
 
@@ -127,7 +167,7 @@ class NaveCapanga(Nave):
         y = self.y - self.altura / 2 - 15
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
-        tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro2,  trajetoria)
+        tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro2, trajetoria)
         self.jogo.tiros.append(tiro)
         # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
 

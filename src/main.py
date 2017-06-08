@@ -51,7 +51,7 @@ class XInvaders(QOpenGLWidget):
         self.score = 0
         self.melhorPontuacao = 0
 
-        self.jogador = NaveJogador(self, 55, 65.7, 0, self.py(-25))
+        self.jogador = NaveJogador(self, 50, 70, 0, self.py(-25))
         self.boss = None
 
         self.musicPlayer = QMediaPlayer()
@@ -70,7 +70,7 @@ class XInvaders(QOpenGLWidget):
     def initializeGL(self):
         """
         Configurações inicias (tela e câmera).
-        Habilita transparência, teste de profundidade, define cor de fundo, modo de superfície e inicializa câmera.
+        Habilita transparência, teste de profundidade, iluminaçao, define cor de fundo, modo de superfície e inicializa câmera.
         :return: None
         """
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -81,6 +81,16 @@ class XInvaders(QOpenGLWidget):
 
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
+
+        glEnable(GL_CULL_FACE)
+        glEnable(GL_LIGHTING)
+
+        lightPosition = [0, 0, 60, 1]
+        lightColor = [.8, 1, .8, 1]
+        glLightfv(GL_LIGHT0, GL_POSITION, lightPosition)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor)
+        glLightfv(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4)
+        glEnable(GL_LIGHT0)
 
         glClearColor(0, 0, 0, 0)
 
@@ -110,13 +120,13 @@ class XInvaders(QOpenGLWidget):
         glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.jogoLargura / 2, self.jogoAltura / 2, -1)  # superior direito
+        glVertex3f(self.jogoLargura / 2, self.jogoAltura / 2, -99)  # superior direito
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(-self.jogoLargura / 2, self.jogoAltura / 2, -1)  # superior esquerdo
+        glVertex3f(-self.jogoLargura / 2, self.jogoAltura / 2, -99)  # superior esquerdo
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(-self.jogoLargura / 2, -self.jogoAltura / 2, -1)  # inferior esquerdo
+        glVertex3f(-self.jogoLargura / 2, -self.jogoAltura / 2, -99)  # inferior esquerdo
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.jogoLargura / 2, -self.jogoAltura / 2, -1)  # inferior direito
+        glVertex3f(self.jogoLargura / 2, -self.jogoAltura / 2, -99)  # inferior direito
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
@@ -240,7 +250,7 @@ class XInvaders(QOpenGLWidget):
             tiro.visivel = False
         for asteroide in self.asteroides:
             asteroide.visivel = False
-        self.jogador = NaveJogador(self, 55, 70, 0, self.py(-25))
+        self.jogador = NaveJogador(self, 50, 70, 0, self.py(-25))
         self.iniciaJogo = False
         if self.score > self.melhorPontuacao:
             self.melhorPontuacao = self.score
