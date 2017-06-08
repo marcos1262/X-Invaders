@@ -224,9 +224,9 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if self.boss is None:
-            if self.nivel % 5 == 0 and self.nivel != 0:
+            if self.nivel % 3 == 0 and self.nivel != 0:
                 self.boss = NaveBoss(self, 80, 103, 0, self.py(55),
-                                     TrajetoriaLinear(randint(-1, 1), self.py(55), 0, True))
+                                     TrajetoriaLinear(randint(-1, 1), self.py(55), 0, randint(0,1)))
             else:
                 x_inicial = randint(int(self.px(-50)) + 55, int(self.px(50)) - 55)
                 if randint(0, 1) * self.iniciaJogo:
