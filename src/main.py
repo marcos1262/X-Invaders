@@ -12,6 +12,7 @@ from Nave import NaveJogador, NaveCapanga, NaveBoss
 from Asteroide import Asteroide
 from XInvadersUi import Ui_MainWindow
 from CameraOrtogonal import CameraOrtogonal
+from CameraPerspectiva import CameraPerspectiva
 
 from Trajetoria import TrajetoriaLinear
 
@@ -96,7 +97,7 @@ class XInvaders(QOpenGLWidget):
 
         glShadeModel(GL_SMOOTH)
 
-        self.camera = CameraOrtogonal(self.jogoLargura, self.jogoAltura, True)
+        self.camera = CameraPerspectiva()
 
         self.carrega_textura("../images/Spacecrafts/tie-figher.png", self.texturaJogador)
         self.carrega_textura("../images/Spacecrafts/y-wing.png", self.texturaCapanga1)
