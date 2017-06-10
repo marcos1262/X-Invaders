@@ -8,6 +8,7 @@ from PyQt5.QtMultimedia import QSound
 from Objeto import Objeto
 from Tiro import Tiro
 from Trajetoria import *
+from math import *
 
 
 class Nave(Objeto):
@@ -18,23 +19,81 @@ class Nave(Objeto):
     visivel = True
     tiro1 = True
     hp = 100
+    target = 0
 
     def desenha(self):
         self.move()
 
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.textura)
+        # glEnable(GL_TEXTURE_2D)
+        # glBindTexture(GL_TEXTURE_2D, self.textura)
+        # glBegin(GL_QUADS)
+        # glTexCoord2f(0.0, 1.0)
+        # glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
+        # glTexCoord2f(0.0, 0.0)
+        # glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
+        # glTexCoord2f(1.0, 0.0)
+        # glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
+        # glTexCoord2f(1.0, 1.0)
+        # glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
+        # glEnd()
+        # glDisable(GL_TEXTURE_2D)
+
+
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
+
+        # face superior
+        color = [1, 1, 1, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
+
+        # face inferior
+        color = [0.5, 0.5, 0.5, 0.5]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
+
+        # face traseira
+        color = [1, 0, 1, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
+
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
+
+
+        # face frontal
+        color = [1, 0, 0, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
+
+        # face esquerda
+        color = [0, 1, 0, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
+
+
+        # face direita
+        color = [0, 0, 1, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
+
         glEnd()
-        glDisable(GL_TEXTURE_2D)
 
         if self.x - self.largura / 2 > self.jogo.jogoLargura \
                 or self.x + self.largura / 2 < -self.jogo.jogoLargura \
@@ -76,32 +135,32 @@ class NaveJogador(Nave):
     def desenha(self):
         self.move()
 
-        color = [1.0, 1.0, 1.0, 1.0]
+        color = [0.8, 0.8, 0.8, 1.0]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
 
         glBegin(GL_TRIANGLES)
 
-        glVertex3f(self.x, self.y, 30)  # superior
-        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
-        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+        glVertex3f(self.x, self.y, 15)  # superior
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -15)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -15)  # inferior direito
 
         color = [0, 1, 0, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
-        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
-        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+        glVertex3f(self.x, self.y + self.altura * 0.8, -15)  # bico
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -15)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -15)  # inferior direito
 
         color = [0, 0, 1, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(self.x, self.y, 30)  # superior
-        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
-        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+        glVertex3f(self.x, self.y, 15)  # superior
+        glVertex3f(self.x, self.y + self.altura * 0.8, -15)  # bico
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -15)  # inferior esquerdo
 
         color = [1, 0, 0, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(self.x, self.y, 30)  # superior
-        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
-        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+        glVertex3f(self.x, self.y, 15)  # superior
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -15)  # inferior direito
+        glVertex3f(self.x, self.y + self.altura * 0.8, -15)  # bico
 
         glEnd()
 
@@ -129,6 +188,7 @@ class NaveJogador(Nave):
             x = self.x + self.largura / 2
             self.tiro1 = False
         y = self.y + self.altura / 2 + 15
+
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
         tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro1, trajetoria)
@@ -165,6 +225,7 @@ class NaveCapanga(Nave):
             x = self.x + self.largura / 2
             self.tiro1 = False
         y = self.y - self.altura / 2 - 15
+
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
         tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro2, trajetoria)
@@ -198,6 +259,7 @@ class NaveBoss(Nave):
             x = self.x + self.largura / 2
             self.tiro1 = False
         y = self.y - self.altura / 2 - 15
+
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
         tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro3, trajetoria)
