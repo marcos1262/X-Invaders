@@ -27,6 +27,7 @@ class XInvaders(QOpenGLWidget):
         self.iniciaJogo = False
         self.bossApareceu = False
         self.nivel = 0
+        self.inclinacao = 0
 
         self.camera = None
 
@@ -117,18 +118,20 @@ class XInvaders(QOpenGLWidget):
 
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
+        glPushMatrix()
+        glRotate(22,1,0,0)
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.jogoLargura, self.jogoAltura, -99)  # superior direito
+        glVertex3f(self.jogoLargura, self.jogoAltura, -200)  # superior direito
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(-self.jogoLargura, self.jogoAltura, -99)  # superior esquerdo
+        glVertex3f(-self.jogoLargura, self.jogoAltura, -200)  # superior esquerdo
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(-self.jogoLargura, -self.jogoAltura, -99)  # inferior esquerdo
+        glVertex3f(-self.jogoLargura, -self.jogoAltura, -200)  # inferior esquerdo
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.jogoLargura, -self.jogoAltura, -99)  # inferior direito
+        glVertex3f(self.jogoLargura, -self.jogoAltura, -200)  # inferior direito
         glEnd()
         glDisable(GL_TEXTURE_2D)
-
+        glPopMatrix()
         if not self.iniciaJogo:
             glFlush()
             return
@@ -146,7 +149,14 @@ class XInvaders(QOpenGLWidget):
         for inimigo in self.inimigos:       inimigo.desenha()
         for tiro in self.tiros:             tiro.desenha()
 
+        if self.jogador.esquerda and not self.jogador.direita: self.inclinacao = -15
+        elif self.jogador.direita and not self.jogador.esquerda: self.inclinacao = 15
+        elif not self.jogador.direita and not self.jogador.esquerda: self.inclinacao = 0
+
+        glPushMatrix()
+        glRotatef(self.inclinacao,0,1,0)
         self.jogador.desenha()
+        glPopMatrix()
 
         self.detecta_colisoes()
 
