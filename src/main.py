@@ -216,7 +216,7 @@ class XInvaders(QOpenGLWidget):
         media = QMediaContent(url)
 
         self.musicPlayer.setMedia(media)
-        self.musicPlayer.play()
+        # self.musicPlayer.play()
 
         self.timerMusicaFundo.start(tempo)
 
