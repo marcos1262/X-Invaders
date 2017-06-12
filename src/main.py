@@ -27,7 +27,6 @@ class XInvaders(QOpenGLWidget):
         self.iniciaJogo = False
         self.bossApareceu = False
         self.nivel = 0
-        self.inclinacao = 0
 
         self.camera = None
 
@@ -149,14 +148,7 @@ class XInvaders(QOpenGLWidget):
         for inimigo in self.inimigos:       inimigo.desenha()
         for tiro in self.tiros:             tiro.desenha()
 
-        if self.jogador.esquerda and not self.jogador.direita: self.inclinacao = -15
-        elif self.jogador.direita and not self.jogador.esquerda: self.inclinacao = 15
-        elif not self.jogador.direita and not self.jogador.esquerda: self.inclinacao = 0
-
-        glPushMatrix()
-        glRotatef(self.inclinacao,0,1,0)
         self.jogador.desenha()
-        glPopMatrix()
 
         self.detecta_colisoes()
 
@@ -232,7 +224,7 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if self.boss is None:
-            if self.nivel % 1 == 0 and self.nivel != 0:
+            if self.nivel % 5 == 0 and self.nivel != 0:
                 self.boss = NaveBoss(self, 80, 103, 0, self.py(65),
                                      TrajetoriaLinear(randint(-1, 1), self.py(65), 0, True))
             else:

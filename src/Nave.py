@@ -101,6 +101,11 @@ class Nave(Objeto):
                 or self.y + self.largura / 2 < -self.jogo.jogoAltura:
             self.visivel = False
 
+    def anguloTiro(self):
+        x = atan2(self.x-self.jogo.jogador.x, self.y-self.jogo.jogador.y )
+        if -1<x<1 : return x
+        else: return 0
+
     def timerEvent(self, QTimerEvent):
         if self.jogo.iniciaJogo * self.visivel: self.atira()
 
@@ -260,7 +265,7 @@ class NaveBoss(Nave):
             self.tiro1 = False
         y = self.y - self.altura / 2 - 15
 
-        trajetoria = TrajetoriaLinear(0, y, x, True)
+        trajetoria = TrajetoriaLinear(self.anguloTiro(), y, x, True)
 
         tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro3, trajetoria)
         self.jogo.tiros.append(tiro)
