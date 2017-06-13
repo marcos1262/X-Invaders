@@ -9,6 +9,8 @@ from Objeto import Objeto
 from Tiro import Tiro
 from Trajetoria import *
 
+import math
+
 
 class Nave(Objeto):
     """
@@ -76,31 +78,102 @@ class NaveJogador(Nave):
         color = [1.0, 1.0, 1.0, 1.0]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
 
-        glBegin(GL_TRIANGLES)
 
-        glVertex3f(self.x, self.y, 30)  # superior
-        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
-        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+        if self.esquerda:
+            glBegin(GL_TRIANGLES)
 
-        color = [0, 1, 0, 1]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
-        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
-        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+            glVertex3f(self.x - (30*math.sqrt(2)/2), self.y, 30 - (30*math.sqrt(2)/2))  # superior
+            glVertex3f(self.x - self.largura / 2 + (30*math.sqrt(2)/2),
+                       self.y - self.altura * 0.2, -30 - self.largura / 2 + (30*math.sqrt(2)/2))  # inferior esquerdo
+            glVertex3f(self.x + self.largura / 2 + (30*math.sqrt(2)/2),
+                       self.y - self.altura * 0.2, -30 + self.largura / 2 + (30*math.sqrt(2)/2))  # inferior direito
 
-        color = [0, 0, 1, 1]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(self.x, self.y, 30)  # superior
-        glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
-        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+            color = [0, 1, 0, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+            glVertex3f(self.x - self.largura / 2 + (30 * math.sqrt(2) / 2), self.y - self.altura * 0.2,
+                       -30 - self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior esquerdo
+            glVertex3f(self.x + self.largura / 2 + (30 * math.sqrt(2) / 2),
+                       self.y - self.altura * 0.2, -30 + self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior direito
 
-        color = [1, 0, 0, 1]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(self.x, self.y, 30)  # superior
-        glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
-        glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+            color = [0, 0, 1, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x - (30 * math.sqrt(2) / 2), self.y, 30 - (30 * math.sqrt(2) / 2))  # superior
+            glVertex3f(self.x - self.largura / 2 + (30 * math.sqrt(2) / 2), self.y - self.altura * 0.2,
+                       -30 - self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior esquerdo
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
 
-        glEnd()
+            color = [1, 0, 0, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x - (30 * math.sqrt(2) / 2), self.y, 30 - (30 * math.sqrt(2) / 2))  # superior
+            glVertex3f(self.x + self.largura / 2 + (30 * math.sqrt(2) / 2),
+                       self.y - self.altura * 0.2, -30 + self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior direito
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+            glEnd()
+
+        elif self.direita:
+
+            glBegin(GL_TRIANGLES)
+
+            glVertex3f(self.x + (30 * math.sqrt(2) / 2), self.y, 30 - (30 * math.sqrt(2) / 2))  # superior
+            glVertex3f(self.x - self.largura / 2 - (30 * math.sqrt(2) / 2),
+                       self.y - self.altura * 0.2, -30 + self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior esquerdo
+            glVertex3f(self.x + self.largura / 2 - (30 * math.sqrt(2) / 2),
+                       self.y - self.altura * 0.2, -30 - self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior direito
+
+            color = [0, 1, 0, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+            glVertex3f(self.x - self.largura / 2 - (30 * math.sqrt(2) / 2), self.y - self.altura * 0.2,
+                       -30 + self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior esquerdo
+            glVertex3f(self.x + self.largura / 2 - (30 * math.sqrt(2) / 2),
+                       self.y - self.altura * 0.2, -30 - self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior direito
+
+            color = [0, 0, 1, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x + (30 * math.sqrt(2) / 2), self.y, 30 - (30 * math.sqrt(2) / 2))  # superior
+            glVertex3f(self.x - self.largura / 2 - (30 * math.sqrt(2) / 2), self.y - self.altura * 0.2,
+                       -30 + self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior esquerdo
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+            color = [1, 0, 0, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x + (30 * math.sqrt(2) / 2), self.y, 30 - (30 * math.sqrt(2) / 2))  # superior
+            glVertex3f(self.x + self.largura / 2 - (30 * math.sqrt(2) / 2),
+                       self.y - self.altura * 0.2, -30 - self.largura / 2 + (30 * math.sqrt(2) / 2))  # inferior direito
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+            glEnd()
+
+        else:
+            glBegin(GL_TRIANGLES)
+
+            glVertex3f(self.x, self.y, 30)  # superior
+            glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
+            glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+
+            color = [0, 1, 0, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+            glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
+            glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+
+            color = [0, 0, 1, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x, self.y, 30)  # superior
+            glVertex3f(self.x - self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior esquerdo
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+            color = [1, 0, 0, 1]
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+            glVertex3f(self.x, self.y, 30)  # superior
+            glVertex3f(self.x + self.largura / 2, self.y - self.altura * 0.2, -30)  # inferior direito
+            glVertex3f(self.x, self.y + self.altura * 0.8, -30)  # bico
+
+            glEnd()
+
+
 
         if self.x - self.largura / 2 > self.jogo.jogoLargura \
                 or self.x + self.largura / 2 < -self.jogo.jogoLargura \
