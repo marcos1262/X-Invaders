@@ -1,6 +1,9 @@
+from random import randint
+
 from OpenGL.GL import *
 
 from PyQt5.QtCore import QObject
+from PyQt5.QtMultimedia import QSound
 
 from Objeto import Objeto
 from Trajetoria import *
@@ -10,6 +13,7 @@ class Asteroide(Objeto):
     """
     Representa um Asteroide.
     """
+
 
     def __init__(self, jogo, largura, altura, x, y, trajetoria: Trajetoria):
         QObject.__init__(self, jogo)

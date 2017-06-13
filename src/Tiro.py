@@ -26,13 +26,13 @@ class Tiro(Objeto):
 
     def desenha(self):
         # TODO colocar textura no tiro
-
         if str(type(self.nave)) == "<class 'Nave.NaveJogador'>":
             glColor4f(0.5, 1, 0.5, 1)
         else:
             glColor4f(1, 0.5, 0.5, 1)
 
         self.move()
+
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.textura)
         glBegin(GL_QUADS)
@@ -47,10 +47,10 @@ class Tiro(Objeto):
         glEnd()
         glDisable(GL_TEXTURE_2D)
 
-        if self.x - self.largura / 2 > self.jogo.jogoLargura * 1.5 \
-                or self.x + self.largura / 2 < -self.jogo.jogoLargura * 1.5 \
-                or self.y - self.largura / 2 > self.jogo.jogoAltura * 1.5 \
-                or self.y + self.largura / 2 < -self.jogo.jogoAltura * 1.5:
+        if self.x - self.largura / 2 > self.jogo.jogoLargura / 2 \
+                or self.x + self.largura / 2 < -self.jogo.jogoLargura / 2 \
+                or self.y - self.largura / 2 > self.jogo.jogoAltura / 2 \
+                or self.y + self.largura / 2 < -self.jogo.jogoAltura / 2:
             self.visivel = False
 
     def move(self):
