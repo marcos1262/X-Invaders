@@ -11,9 +11,7 @@ from random import *
 from Nave import NaveJogador, NaveCapanga, NaveBoss
 from Asteroide import Asteroide
 from XInvadersUi import Ui_MainWindow
-from CameraOrtogonal import CameraOrtogonal
 from CameraPerspectiva import CameraPerspectiva
-
 from Trajetoria import TrajetoriaLinear
 
 
@@ -119,18 +117,20 @@ class XInvaders(QOpenGLWidget):
 
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
+        glPushMatrix()
+        glRotate(22,1,0,0)
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.jogoLargura / 2, self.jogoAltura / 2, -99)  # superior direito
+        glVertex3f(self.jogoLargura, self.jogoAltura, -200)  # superior direito
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(-self.jogoLargura / 2, self.jogoAltura / 2, -99)  # superior esquerdo
+        glVertex3f(-self.jogoLargura, self.jogoAltura, -200)  # superior esquerdo
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(-self.jogoLargura / 2, -self.jogoAltura / 2, -99)  # inferior esquerdo
+        glVertex3f(-self.jogoLargura, -self.jogoAltura, -200)  # inferior esquerdo
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.jogoLargura / 2, -self.jogoAltura / 2, -99)  # inferior direito
+        glVertex3f(self.jogoLargura, -self.jogoAltura, -200)  # inferior direito
         glEnd()
         glDisable(GL_TEXTURE_2D)
-
+        glPopMatrix()
         if not self.iniciaJogo:
             glFlush()
             return
@@ -224,28 +224,22 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if self.boss is None:
-<<<<<<< HEAD
-            if self.nivel % 5 == 0 and self.nivel != 0:
+            if self.nivel % 1 == 0 and self.nivel != 0:
                 self.boss = NaveBoss(self, 80, 103, 0, self.py(65),
                                      TrajetoriaLinear(randint(-1, 1), self.py(65), 0, True))
-=======
-            if self.nivel % 3 == 0 and self.nivel != 0:
-                self.boss = NaveBoss(self, 80, 103, 0, self.py(55),
-                                     TrajetoriaLinear(randint(-1, 1), self.py(55), 0, randint(0,1)))
->>>>>>> 6763061652677b2b58689389c52a8001778a9312
             else:
                 x_inicial = randint(int(self.px(-50)) + 55, int(self.px(50)) - 55)
                 if randint(0, 1) * self.iniciaJogo:
                     self.inimigos.append(
-                        NaveCapanga(self, 55, 72, x_inicial, self.py(55),
-                                    TrajetoriaLinear(randint(-1, 1), self.py(55), x_inicial, True)
+                        NaveCapanga(self, 55, 72, x_inicial, self.py(65),
+                                    TrajetoriaLinear(randint(-1, 1), self.py(65), x_inicial, True)
                                     )
                     )
                 elif (randint(0, 5) == 5) * self.iniciaJogo:
                     lado = randint(45, 65)
                     self.asteroides.append(
-                        Asteroide(self, lado, lado, x_inicial, self.py(55),
-                                  TrajetoriaLinear(0, self.py(55), x_inicial, True)
+                        Asteroide(self, lado, lado, x_inicial, self.py(65),
+                                  TrajetoriaLinear(0, self.py(65), x_inicial, True)
                                   )
                     )
         self.spawner.start(randint(0, 3000 - self.nivel * 100))
@@ -309,8 +303,7 @@ class XInvaders(QOpenGLWidget):
                             if x == 1: QSound("../sounds/SFX/Fighter EXPL 1.wav", self).play()
                             if x == 2: QSound("../sounds/SFX/Fighter EXPL 2.wav", self).play()
                             if x == 3: QSound("../sounds/SFX/Fighter EXPL 3.wav", self).play()
-                            if x == 4:
-                                QSound("../sounds/SFX/Fighter EXPL 4.wav", self).play()
+                            if x == 4: QSound("../sounds/SFX/Fighter EXPL 4.wav", self).play()
                             else:
                                 QSound("../sounds/SFX/Fighter EXPL 5.wav", self).play()
                         self.score += 25
