@@ -1,0 +1,3 @@
+sudo apt-get install python3-pyqt5 python3-pip python3-dev python3-pyqt5.qtopengl qttools5-dev pyqt5-dev-tools qtmultimedia5-dev python3-pyqt5.qtmultimedia libqt5multimedia5-plugins
+
+sudo pip3 install PyOpenGL PyOpenGL_accelerate
