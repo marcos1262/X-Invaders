@@ -8,6 +8,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWidgets import *
 from random import *
 
+from Audio import Audio
 from Nave import NaveJogador, NaveCapanga, NaveBoss
 from Asteroide import Asteroide
 from XInvadersUi import Ui_MainWindow
@@ -53,16 +54,12 @@ class XInvaders(QOpenGLWidget):
         self.jogador = NaveJogador(self, 50, 70, 0, self.py(-25))
         self.boss = None
 
-        self.musicPlayer = QMediaPlayer()
-        app.lastWindowClosed.connect(lambda: self.musicPlayer.stop() or self.timerMusicaFundo.stop())
+        self.audio = Audio(app, self)
+        self.audio.toca_musica_fundo()
 
         self.spawner = QTimer()
         self.spawner.timeout.connect(self.cria_objetos)
         self.cria_objetos()
-
-        self.timerMusicaFundo = QTimer()
-        self.timerMusicaFundo.timeout.connect(self.toca_musica_fundo)
-        self.toca_musica_fundo()
 
         self.startTimer(30)
 
@@ -115,22 +112,8 @@ class XInvaders(QOpenGLWidget):
         """
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
-        glPushMatrix()
-        glRotate(22,1,0,0)
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.jogoLargura, self.jogoAltura, -200)  # superior direito
-        glTexCoord2f(0.0, 0.0)
-        glVertex3f(-self.jogoLargura, self.jogoAltura, -200)  # superior esquerdo
-        glTexCoord2f(1.0, 0.0)
-        glVertex3f(-self.jogoLargura, -self.jogoAltura, -200)  # inferior esquerdo
-        glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.jogoLargura, -self.jogoAltura, -200)  # inferior direito
-        glEnd()
-        glDisable(GL_TEXTURE_2D)
-        glPopMatrix()
+        self.desenha_fundo()
+
         if not self.iniciaJogo:
             glFlush()
             return
@@ -153,8 +136,6 @@ class XInvaders(QOpenGLWidget):
         self.detecta_colisoes()
 
         self.mostra_status()
-
-        # TODO mostrar minitutorial de como jogar (no nível 0)
 
         glFlush()
 
@@ -202,25 +183,27 @@ class XInvaders(QOpenGLWidget):
             self.jogador.velocidade = 10
             self.jogador.taxaTiro = 150
 
-    def toca_musica_fundo(self):
-        dir_projeto = os.getcwd() + "/../"
+    def desenha_fundo(self):
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
 
-        # TODO Separar controle de áudio em classe separada
+        glPushMatrix()
+        glRotate(22, 1, 0, 0)
 
-        if self.iniciaJogo:
-            arquivo = "sounds/fundo_jogo.mp3"
-            tempo = 208800
-        else:
-            arquivo = "sounds/fundo_menu.mp3"
-            tempo = 67200
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(self.jogoLargura, self.jogoAltura, -200)  # superior direito
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(-self.jogoLargura, self.jogoAltura, -200)  # superior esquerdo
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(-self.jogoLargura, -self.jogoAltura, -200)  # inferior esquerdo
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(self.jogoLargura, -self.jogoAltura, -200)  # inferior direito
+        glEnd()
 
-        url = QUrl().fromLocalFile(dir_projeto + arquivo)
-        media = QMediaContent(url)
+        glPopMatrix()
 
-        self.musicPlayer.setMedia(media)
-        self.musicPlayer.play()
-
-        self.timerMusicaFundo.start(tempo)
+        glDisable(GL_TEXTURE_2D)
 
     def cria_objetos(self):
         if self.boss is None:
@@ -268,20 +251,20 @@ class XInvaders(QOpenGLWidget):
 
     def detecta_colisoes(self):
         if self.boss != None and self.jogador.colidiu(self.boss):
-            QSound("../sounds/SFX/TIE EXPL.wav", self).play()
+            self.audio.toca_som("../sounds/SFX/TIE EXPL.wav")
             self.jogador.visivel = False
             self.boss.visivel = False
             self.encerrar_partida()
         for i in self.inimigos:
             if self.jogador.colidiu(i):
-                QSound("../sounds/SFX/TIE EXPL.wav", self).play()
+                self.audio.toca_som("../sounds/SFX/TIE EXPL.wav")
                 self.jogador.visivel = False
                 i.visivel = False
                 self.encerrar_partida()
         for a in self.asteroides:
             if self.jogador.colidiu(a):
-                QSound("../sounds/SFX/Asteroid Crash.wav", self).play()
-                QSound("../sounds/SFX/TIE EXPL.wav", self).play()
+                self.audio.toca_som("../sounds/SFX/Asteroid Crash.wav")
+                self.audio.toca_som("../sounds/SFX/TIE EXPL.wav")
                 self.jogador.visivel = False
                 a.visivel = False
                 self.encerrar_partida()
@@ -292,7 +275,7 @@ class XInvaders(QOpenGLWidget):
                     if self.boss.hp <= 0:
                         self.score += 500
                         self.boss.visivel = False
-                        QSound("../sounds/SFX/Large Explosion.wav", self).play()
+                        self.audio.toca_som("../sounds/SFX/Large Explosion.wav")
                     t.visivel = False
                 for i in self.inimigos:
                     if i.colidiu(t):
@@ -300,12 +283,12 @@ class XInvaders(QOpenGLWidget):
                         if i.hp <= 0:
                             i.visivel = False
                             x = randint(1, 5)
-                            if x == 1: QSound("../sounds/SFX/Fighter EXPL 1.wav", self).play()
-                            if x == 2: QSound("../sounds/SFX/Fighter EXPL 2.wav", self).play()
-                            if x == 3: QSound("../sounds/SFX/Fighter EXPL 3.wav", self).play()
-                            if x == 4: QSound("../sounds/SFX/Fighter EXPL 4.wav", self).play()
+                            if x == 1: self.audio.toca_som("../sounds/SFX/Fighter EXPL 1.wav")
+                            if x == 2: self.audio.toca_som("../sounds/SFX/Fighter EXPL 2.wav")
+                            if x == 3: self.audio.toca_som("../sounds/SFX/Fighter EXPL 3.wav")
+                            if x == 4: self.audio.toca_som("../sounds/SFX/Fighter EXPL 4.wav")
                             else:
-                                QSound("../sounds/SFX/Fighter EXPL 5.wav", self).play()
+                                self.audio.toca_som("../sounds/SFX/Fighter EXPL 5.wav")
                         self.score += 25
                         t.visivel = False
                 for a in self.asteroides:
@@ -313,13 +296,13 @@ class XInvaders(QOpenGLWidget):
                         a.hp -= 20
                         if a.hp <= 0:
                             a.visivel = False
-                            QSound("../sounds/SFX/Asteroid Crash.wav", self).play()
+                            self.audio.toca_som("../sounds/SFX/Asteroid Crash.wav")
                         t.visivel = False
             elif self.jogador.colidiu(t):
                 self.jogador.hp -= 15 + self.nivel * 5
-                QSound("../sounds/SFX/Shield Hit.wav", self).play()
+                self.audio.toca_som("../sounds/SFX/Shield Hit.wav")
                 if self.jogador.hp <= 0:
-                    QSound("../sounds/SFX/TIE EXPL.wav", self).play()
+                    self.audio.toca_som("../sounds/SFX/TIE EXPL.wav")
                     self.jogador.visivel = False
                     self.encerrar_partida()
                 t.visivel = False

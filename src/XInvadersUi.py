@@ -132,8 +132,8 @@ class Ui_MainWindow(object):
         self.jogo.setFocus()
         self.jogo.iniciaJogo = True
         QtCore.QCoreApplication.sendEvent(
-            self.jogo.timerMusicaFundo,
-            QtCore.QTimerEvent(self.jogo.timerMusicaFundo.timerId())
+            self.jogo.audio.timerMusicaFundo,
+            QtCore.QTimerEvent(self.jogo.audio.timerMusicaFundo.timerId())
         )
 
 

@@ -11,6 +11,7 @@ from Tiro import Tiro
 from Trajetoria import *
 from math import *
 
+
 class Nave(Objeto):
     """
     Representa todo tipo de nave.
@@ -82,9 +83,11 @@ class Nave(Objeto):
             self.visivel = False
 
     def anguloJogador(self):
-        x = atan2(self.x-self.jogo.jogador.x, self.y-self.jogo.jogador.y )
-        if -1<x<1 : return x
-        else: return 0
+        x = atan2(self.x - self.jogo.jogador.x, self.y - self.jogo.jogador.y)
+        if -1 < x < 1:
+            return x
+        else:
+            return 0
 
     def timerEvent(self, QTimerEvent):
         if self.jogo.iniciaJogo * self.visivel: self.atira()
@@ -129,7 +132,6 @@ class NaveJogador(Nave):
         # glPushMatrix()
 
         self.move()
-
 
         # glBegin(GL_TRIANGLES)
         #
@@ -275,7 +277,8 @@ class NaveJogador(Nave):
             # * math.sqrt(2)/2
             # glRotatef(45, 0, 1, 0)
             # glTranslate(0, 0, self.x * math.sqrt(2)/2)
-        elif not self.direita and not self.esquerda: self.r = 0
+        elif not self.direita and not self.esquerda:
+            self.r = 0
         if self.cima and self.y < self.jogo.jogoAltura / 2 - self.altura / 2:
             self.y += self.velocidade
         elif self.baixo and self.y > -self.jogo.jogoAltura / 2 + self.altura / 2:
@@ -294,7 +297,7 @@ class NaveJogador(Nave):
 
         tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro1, trajetoria)
         self.jogo.tiros.append(tiro)
-        # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
+        # self.jogo.audio.toca_som("../sounds/SFX/TIE Laser 1A.wav")
 
 
 class NaveCapanga(Nave):
@@ -331,7 +334,7 @@ class NaveCapanga(Nave):
 
         tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro2, trajetoria)
         self.jogo.tiros.append(tiro)
-        # QSound("../sounds/SFX/TIE Laser 1A.wav", self).play()
+        # self.jogo.audio.toca_som("../sounds/SFX/TIE Laser 1A.wav")
 
 
 class NaveBoss(Nave):
