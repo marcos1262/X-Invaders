@@ -1,10 +1,7 @@
-import os
-
 from OpenGL.GL import *
 from PIL import Image
 
-from PyQt5.QtCore import QUrl, Qt, QTimer
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QSound
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import *
 from random import *
 
