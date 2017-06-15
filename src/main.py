@@ -37,6 +37,7 @@ class XInvaders(QOpenGLWidget):
         self.texturaTiro2 = 7
         self.texturaTiro3 = 8
         self.texturaFundo = 9
+        self.cockpit = 10
 
         self.jogador = None
         self.boss = None
@@ -78,7 +79,7 @@ class XInvaders(QOpenGLWidget):
         glEnable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
 
-        lightPosition = [0, 0, 60, 1]
+        lightPosition = [0, 0, 0, 1]
         lightColor = [.8, 1, .8, 1]
         glLightfv(GL_LIGHT0, GL_POSITION, lightPosition)
         glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor)
@@ -100,6 +101,7 @@ class XInvaders(QOpenGLWidget):
         self.carrega_textura("../images/beams/red-laser1.png", self.texturaTiro2)
         self.carrega_textura("../images/beams/red-laser2.png", self.texturaTiro3)
         self.carrega_textura("../images/fundo.jpg", self.texturaFundo)
+        self.carrega_textura("../images/cockpit.png", self.cockpit)
 
     def paintGL(self):
         """
@@ -110,6 +112,10 @@ class XInvaders(QOpenGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.desenha_fundo()
+        if self.jogador.esquerda: a=-0.585
+        elif self.jogador.direita: a=0.585
+        else: a=0
+        self.camera.atualiza(self.jogador.x, self.jogador.y, a)
 
         if not self.iniciaJogo:
             glFlush()
@@ -185,17 +191,18 @@ class XInvaders(QOpenGLWidget):
         glBindTexture(GL_TEXTURE_2D, self.texturaFundo)
 
         glPushMatrix()
-        glRotate(22, 1, 0, 0)
+        glTranslate(self.jogador.x,500+self.jogador.y, 0)
+        glRotate(90, 1, 0, 0)
 
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.jogoLargura, self.jogoAltura, -200)  # superior direito
+        glVertex3f(self.jogoLargura*1.5, self.jogoAltura*1.5, -200)  # superior direito
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(-self.jogoLargura, self.jogoAltura, -200)  # superior esquerdo
+        glVertex3f(-self.jogoLargura*1.5, self.jogoAltura*1.5, -200)  # superior esquerdo
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(-self.jogoLargura, -self.jogoAltura, -200)  # inferior esquerdo
+        glVertex3f(-self.jogoLargura*1.5, -self.jogoAltura*1.5, -200)  # inferior esquerdo
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.jogoLargura, -self.jogoAltura, -200)  # inferior direito
+        glVertex3f(self.jogoLargura*1.5, -self.jogoAltura*1.5, -200)  # inferior direito
         glEnd()
 
         glPopMatrix()

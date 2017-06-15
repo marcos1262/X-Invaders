@@ -182,7 +182,7 @@ class NaveJogador(Nave):
         else:
             x = self.x + self.largura / 2
             self.tiro1 = False
-        y = self.y + self.altura / 2 + 15
+        y = self.y
 
         trajetoria = TrajetoriaLinear(0, y, x, True)
 
@@ -255,7 +255,7 @@ class NaveBoss(Nave):
             self.tiro1 = False
         y = self.y - self.altura / 2 - 15
 
-        trajetoria = TrajetoriaLinear(self.anguloJogador(), y, x, True)
+        trajetoria = TrajetoriaLinear(self.anguloJogador(), y, x-self.anguloJogador()*100, True)
 
         tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro3, trajetoria, self.anguloJogador())
         self.jogo.tiros.append(tiro)

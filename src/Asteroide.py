@@ -36,19 +36,73 @@ class Asteroide(Objeto):
     def desenha(self):
         self.move()
 
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.textura)
         glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 1.0)
-        glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
-        glTexCoord2f(0.0, 0.0)
-        glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
-        glTexCoord2f(1.0, 0.0)
-        glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
-        glTexCoord2f(1.0, 1.0)
-        glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
+
+        # face superior
+        color = [0.5, 0.5, 0.5, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, self.largura / 2)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, self.largura / 2)  # inferior direito
+
+        # face inferior
+        color = [0.2, 0.2, 0.2, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, -self.largura / 2)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -self.largura / 2)  # inferior direito
+
+        # face traseira
+        color = [0.3, 0.3, 0.3, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, self.largura / 2)  # inferior esquerdo
+
+        # face frontal
+        color = [0.3, 0.3, 0.3, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, self.largura / 2)  # inferior direito
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, self.largura / 2)  # inferior direito
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, -self.largura / 2)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -self.largura / 2)  # inferior direito
+
+        # face esquerda
+        color = [0.1, 0.1, 0.1, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, -self.largura / 2)  # inferior direito
+        glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, self.largura / 2)  # inferior direito
+
+        # face direita
+        color = [0.1, 0.1, 0.1, 1]
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, self.largura / 2)  # inferior esquerdo
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, self.largura / 2)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -self.largura / 2)  # inferior direito
+        glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -self.largura / 2)  # inferior esquerdo
+
         glEnd()
-        glDisable(GL_TEXTURE_2D)
+
+        # self.move()
+        #
+        # glEnable(GL_TEXTURE_2D)
+        # glBindTexture(GL_TEXTURE_2D, self.textura)
+        # glBegin(GL_QUADS)
+        # glTexCoord2f(0.0, 1.0)
+        # glVertex2f(self.x + self.largura / 2, self.y + self.altura / 2)  # superior direito
+        # glTexCoord2f(0.0, 0.0)
+        # glVertex2f(self.x - self.largura / 2, self.y + self.altura / 2)  # superior esquerdo
+        # glTexCoord2f(1.0, 0.0)
+        # glVertex2f(self.x - self.largura / 2, self.y - self.altura / 2)  # inferior esquerdo
+        # glTexCoord2f(1.0, 1.0)
+        # glVertex2f(self.x + self.largura / 2, self.y - self.altura / 2)  # inferior direito
+        # glEnd()
+        # glDisable(GL_TEXTURE_2D)
 
         if self.x - self.largura / 2 > self.jogo.jogoLargura \
                 or self.x + self.largura / 2 < -self.jogo.jogoLargura \
