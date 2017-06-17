@@ -54,9 +54,7 @@ class Tiro(Objeto):
 
         glPopMatrix()
 
-        if self.x - self.largura / 1.5 > self.jogo.jogoLargura / 1.5 \
-                or self.x + self.largura / 1.5 < -self.jogo.jogoLargura / 1.5 \
-                or self.y - self.largura / 1.5 > self.jogo.jogoAltura / 1.5 \
+        if self.y - self.largura / 1.5 > self.jogo.jogoAltura / 1.5 \
                 or self.y + self.largura / 1.5 < -self.jogo.jogoAltura / 1.5:
             self.visivel = False
 

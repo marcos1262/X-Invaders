@@ -110,10 +110,10 @@ class XInvaders(QOpenGLWidget):
         :return: None
         """
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         self.desenha_fundo()
-        if self.jogador.esquerda: a=-0.585
-        elif self.jogador.direita: a=0.585
+
+        if self.jogador.esquerda: a=-1#0.585
+        elif self.jogador.direita: a=1#0.585
         else: a=0
         self.camera.atualiza(self.jogador.x, self.jogador.y, a)
 
@@ -196,13 +196,13 @@ class XInvaders(QOpenGLWidget):
 
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.jogoLargura*1.5, self.jogoAltura*1.5, -200)  # superior direito
+        glVertex3f(self.jogoLargura*2, self.jogoAltura*2, -200)  # superior direito
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(-self.jogoLargura*1.5, self.jogoAltura*1.5, -200)  # superior esquerdo
+        glVertex3f(-self.jogoLargura*2, self.jogoAltura*2, -200)  # superior esquerdo
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(-self.jogoLargura*1.5, -self.jogoAltura*1.5, -200)  # inferior esquerdo
+        glVertex3f(-self.jogoLargura*2, -self.jogoAltura*2, -200)  # inferior esquerdo
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.jogoLargura*1.5, -self.jogoAltura*1.5, -200)  # inferior direito
+        glVertex3f(self.jogoLargura*2, -self.jogoAltura*2, -200)  # inferior direito
         glEnd()
 
         glPopMatrix()
@@ -211,11 +211,12 @@ class XInvaders(QOpenGLWidget):
 
     def cria_objetos(self):
         if self.boss is None:
-            if self.nivel % 1 == 0 and self.nivel != 0:
-                self.boss = NaveBoss(self, 80, 103, 0, self.py(65),
+            if self.nivel % 2 == 0 and self.nivel != 0:
+                self.boss = NaveBoss(self, 80, 103, self.jogador.x, self.py(65),
                                      TrajetoriaLinear(randint(-1, 1), self.py(65), 0, True))
             else:
-                x_inicial = randint(int(self.px(-50)) + 55, int(self.px(50)) - 55)
+                # x_inicial = randint(int(self.px(-50)) + 55, int(self.px(50)) - 55)
+                x_inicial = randint(self.jogador.x-self.jogoLargura/2, self.jogador.x-self.jogoLargura/2)
                 if randint(0, 1) * self.iniciaJogo:
                     self.inimigos.append(
                         NaveCapanga(self, 55, 72, x_inicial, self.py(65),

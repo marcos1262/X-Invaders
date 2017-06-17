@@ -1,6 +1,7 @@
 from random import randint
 
 from OpenGL.GL import *
+from OpenGL.GL.exceptional import glEnd
 
 from PyQt5.QtCore import QObject
 
@@ -74,10 +75,7 @@ class Nave(Objeto):
 
         glEnd()
 
-        if self.x - self.largura / 2 > self.jogo.jogoLargura \
-                or self.x + self.largura / 2 < -self.jogo.jogoLargura \
-                or self.y - self.largura / 2 > self.jogo.jogoAltura \
-                or self.y + self.largura / 2 < -self.jogo.jogoAltura:
+        if self.y + self.largura / 2 < -self.jogo.jogoAltura:
             self.visivel = False
 
     def anguloJogador(self):
@@ -116,64 +114,79 @@ class NaveJogador(Nave):
         self.startTimer(self.taxaTiro)
 
     def desenha(self):
-        v1 = [0, 0, 15]
-        v2 = [- self.largura / 2,  - self.altura * 0.2, -15]
-        v3 = [self.largura / 2,  - self.altura * 0.2, -15]
-        v4 = [0, self.altura * 0.8, -15]
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.jogo.cockpit)
 
         glPushMatrix()
 
         self.move()
-
-        glBegin(GL_TRIANGLES)
-
-        color = [0.8, 0.8, 0.8, 1.0]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(v1[0],v1[1],v1[2])  # superior
-        glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
-        glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
-
-        color = [0, 1, 0, 1]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(v4[0],v4[1],v4[2])  # bico
-        glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
-        glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
-
-        color = [0, 0, 1, 1]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(v1[0],v1[1],v1[2])  # superior
-        glVertex3f(v4[0],v4[1],v4[2])  # bico
-        glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
-
-        color = [1, 0, 0, 1]
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        glVertex3f(v1[0],v1[1],v1[2])  # superior
-        glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
-        glVertex3f(v4[0],v4[1],v4[2])  # bico
-
+        glTranslate(0,6,20)
+        glBegin(GL_QUADS)
+        glTexCoord2f(0.0, 1.0)
+        glVertex3f(self.largura/30, 0, self.largura/30)
+        glTexCoord2f(0.0, 0.0)
+        glVertex3f(- self.largura/30, 0, self.largura/30)
+        glTexCoord2f(1.0, 0.0)
+        glVertex3f(- self.largura/30, 0, -self.largura/30)
+        glTexCoord2f(1.0, 1.0)
+        glVertex3f(self.largura/30, 0, -self.largura/30)
         glEnd()
 
         glPopMatrix()
 
-        if self.x - self.largura / 2 > self.jogo.jogoLargura \
-                or self.x + self.largura / 2 < -self.jogo.jogoLargura \
-                or self.y - self.largura / 2 > self.jogo.jogoAltura \
-                or self.y + self.largura / 2 < -self.jogo.jogoAltura:
-            self.visivel = False
+        # v1 = [0, 0, 15]
+        # v2 = [- self.largura / 2,  -self.altura * 0.2, -15]
+        # v3 = [self.largura / 2,  -self.altura * 0.2, -15]
+        # v4 = [0, self.altura * 0.8, -15]
+        #
+        # glPushMatrix()
+        #
+        # self.move()
+        #
+        # glBegin(GL_TRIANGLES)
+        #
+        # color = [0.8, 0.8, 0.8, 1.0]
+        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        # glVertex3f(v1[0],v1[1],v1[2])  # superior
+        # glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
+        # glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
+        #
+        # color = [0, 1, 0, 1]
+        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        # glVertex3f(v4[0],v4[1],v4[2])  # bico
+        # glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
+        # glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
+        #
+        # color = [0, 0, 1, 1]
+        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        # glVertex3f(v1[0],v1[1],v1[2])  # superior
+        # glVertex3f(v4[0],v4[1],v4[2])  # bico
+        # glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
+        #
+        # color = [1, 0, 0, 1]
+        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+        # glVertex3f(v1[0],v1[1],v1[2])  # superior
+        # glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
+        # glVertex3f(v4[0],v4[1],v4[2])  # bico
+        #
+        # glEnd()
+        #
+        # glPopMatrix()
 
     def move(self):
+        print(self.x)
         glTranslate(self.x, self.y, 0)
 
-        if self.esquerda and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
+        if self.esquerda :#and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
             self.x -= self.velocidade
-            glRotatef(-30, 0, 1, 0)
-        elif self.direita and self.x < self.jogo.jogoLargura / 2 - self.largura / 2:
+            glRotatef(-45, 0, 1, 0)
+        elif self.direita :# and self.x < self.jogo.jogoLargura / 2 - self.largura / 2:
             self.x += self.velocidade
-            glRotatef(30, 0, 1, 0)
-        if self.cima and self.y < self.jogo.jogoAltura / 2 - self.altura / 2:
-            self.y += self.velocidade
-        elif self.baixo and self.y > -self.jogo.jogoAltura / 2 + self.altura / 2:
-            self.y -= self.velocidade
+            glRotatef(45, 0, 1, 0)
+        # if self.cima and self.y < self.jogo.jogoAltura / 2 - self.altura / 2:
+        #     self.y += self.velocidade
+        # elif self.baixo and self.y > -self.jogo.jogoAltura / 2 + self.altura / 2:
+        #     self.y -= self.velocidade
 
     def atira(self):
         if not self.tiro1:
