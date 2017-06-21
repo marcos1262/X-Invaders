@@ -115,7 +115,7 @@ class XInvaders(QOpenGLWidget):
         if self.jogador.esquerda: a=-1#0.585
         elif self.jogador.direita: a=1#0.585
         else: a=0
-        self.camera.atualiza(self.jogador.x, self.jogador.y, a)
+        self.camera.atualiza(self.jogador.x, self.jogador.y, self.jogador.angulo * a)
 
         if not self.iniciaJogo:
             glFlush()

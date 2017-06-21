@@ -100,6 +100,7 @@ class NaveJogador(Nave):
         self.altura = altura
         self.x = x
         self.y = y
+        self.angulo = 0
 
         self.velocidade = 10
         self.textura = self.jogo.texturaJogador
@@ -120,19 +121,20 @@ class NaveJogador(Nave):
         glPushMatrix()
 
         self.move()
-        glTranslate(0,6,20)
+        glTranslate(0, 34, 0)
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.largura/30, 0, self.largura/30)
+        glVertex3f(self.largura, 0, self.largura)
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(- self.largura/30, 0, self.largura/30)
+        glVertex3f(- self.largura, 0, self.largura)
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(- self.largura/30, 0, -self.largura/30)
+        glVertex3f(- self.largura, 0, -self.largura)
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.largura/30, 0, -self.largura/30)
+        glVertex3f(self.largura, 0, -self.largura)
         glEnd()
 
         glPopMatrix()
+        glDisable(GL_TEXTURE_2D)
 
         # v1 = [0, 0, 15]
         # v2 = [- self.largura / 2,  -self.altura * 0.2, -15]
@@ -174,19 +176,20 @@ class NaveJogador(Nave):
         # glPopMatrix()
 
     def move(self):
-        print(self.x)
         glTranslate(self.x, self.y, 0)
 
-        if self.esquerda :#and self.x > -self.jogo.jogoLargura / 2 + self.largura / 2:
+        if self.esquerda:
             self.x -= self.velocidade
-            glRotatef(-45, 0, 1, 0)
-        elif self.direita :# and self.x < self.jogo.jogoLargura / 2 - self.largura / 2:
+
+            if self.angulo < 45: self.angulo += 1;
+            glRotatef(-self.angulo, 0, 1, 0)
+        elif self.direita:
             self.x += self.velocidade
-            glRotatef(45, 0, 1, 0)
-        # if self.cima and self.y < self.jogo.jogoAltura / 2 - self.altura / 2:
-        #     self.y += self.velocidade
-        # elif self.baixo and self.y > -self.jogo.jogoAltura / 2 + self.altura / 2:
-        #     self.y -= self.velocidade
+
+            if self.angulo < 45: self.angulo += 1;
+            glRotatef(self.angulo, 0, 1, 0)
+        else:
+            if self.angulo > 0: self.angulo -= 1
 
     def atira(self):
         if not self.tiro1:
@@ -201,7 +204,6 @@ class NaveJogador(Nave):
 
         tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro1, trajetoria)
         self.jogo.tiros.append(tiro)
-        # self.jogo.audio.toca_som("../sounds/SFX/TIE Laser 1A.wav")
 
 
 class NaveCapanga(Nave):
@@ -268,7 +270,7 @@ class NaveBoss(Nave):
             self.tiro1 = False
         y = self.y - self.altura / 2 - 15
 
-        trajetoria = TrajetoriaLinear(self.anguloJogador(), y, x-self.anguloJogador()*100, True)
+        trajetoria = TrajetoriaLinear(self.anguloJogador(), y, x - self.anguloJogador() * 100, True)
 
         tiro = Tiro(self, 15, 50, x, y, self.jogo.texturaTiro3, trajetoria, self.anguloJogador())
         self.jogo.tiros.append(tiro)

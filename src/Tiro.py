@@ -22,7 +22,7 @@ class Tiro(Objeto):
         self.textura = textura
         self.angulo = angulo
 
-        self.velocidade = nave.velocidade+5
+        self.velocidade = nave.velocidade+50
         self.visivel = True
 
     def desenha(self):
@@ -34,9 +34,10 @@ class Tiro(Objeto):
         glPushMatrix()
         self.move()
 
-        glTranslate(self.x, self.y, 0)
+        glTranslate(self.x, self.y, -20)
 
         glRotate(-45*self.angulo, 0, 0, 1)
+        # glRotate(90, 0, 1, 0)
 
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.textura)

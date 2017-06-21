@@ -19,5 +19,4 @@ class CameraPerspectiva:
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-        if a==0: gluLookAt(x+a*14, y+5, 19.8, x+a*14, y+100, 19.8, a, 1, 1)
-        else: gluLookAt(x+a*14, y+5, 13+abs(a), x+a*14, y+100, 13+abs(a), a, 1, 1)
+        gluLookAt(x, y, 0, x, 0, 0, a/45, 0, 1)
