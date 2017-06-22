@@ -112,10 +112,7 @@ class XInvaders(QOpenGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.desenha_fundo()
 
-        if self.jogador.esquerda: a=-1#0.585
-        elif self.jogador.direita: a=1#0.585
-        else: a=0
-        self.camera.atualiza(self.jogador.x, self.jogador.y, self.jogador.angulo * a)
+        self.camera.atualiza(self.jogador.x, self.jogador.y, self.jogador.angulo)
 
         if not self.iniciaJogo:
             glFlush()
@@ -212,15 +209,15 @@ class XInvaders(QOpenGLWidget):
     def cria_objetos(self):
         if self.boss is None:
             if self.nivel % 2 == 0 and self.nivel != 0:
-                self.boss = NaveBoss(self, 80, 103, self.jogador.x, self.py(65),
-                                     TrajetoriaLinear(randint(-1, 1), self.py(65), 0, True))
+                self.boss = NaveBoss(self, 80, 103, self.jogador.x, self.py(70),
+                                     TrajetoriaLinear(randint(-1, 1), self.py(70), 0, True))
             else:
                 # x_inicial = randint(int(self.px(-50)) + 55, int(self.px(50)) - 55)
                 x_inicial = randint(self.jogador.x-self.jogoLargura/2, self.jogador.x-self.jogoLargura/2)
                 if randint(0, 1) * self.iniciaJogo:
                     self.inimigos.append(
-                        NaveCapanga(self, 55, 72, x_inicial, self.py(65),
-                                    TrajetoriaLinear(randint(-1, 1), self.py(65), x_inicial, True)
+                        NaveCapanga(self, 55, 72, x_inicial, self.py(70),
+                                    TrajetoriaLinear(randint(-1, 1), self.py(70), x_inicial, True)
                                     )
                     )
                 elif (randint(0, 5) == 5) * self.iniciaJogo:
@@ -284,7 +281,7 @@ class XInvaders(QOpenGLWidget):
                     t.visivel = False
                 for i in self.inimigos:
                     if i.colidiu(t):
-                        i.hp -= 25
+                        i.hp -= 50
                         if i.hp <= 0:
                             i.visivel = False
                             x = randint(1, 5)
@@ -292,8 +289,7 @@ class XInvaders(QOpenGLWidget):
                             if x == 2: self.audio.toca_som("../sounds/SFX/Fighter EXPL 2.wav")
                             if x == 3: self.audio.toca_som("../sounds/SFX/Fighter EXPL 3.wav")
                             if x == 4: self.audio.toca_som("../sounds/SFX/Fighter EXPL 4.wav")
-                            else:
-                                self.audio.toca_som("../sounds/SFX/Fighter EXPL 5.wav")
+                            else: self.audio.toca_som("../sounds/SFX/Fighter EXPL 5.wav")
                         self.score += 25
                         t.visivel = False
                 for a in self.asteroides:

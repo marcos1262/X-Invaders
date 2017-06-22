@@ -121,16 +121,16 @@ class NaveJogador(Nave):
         glPushMatrix()
 
         self.move()
-        glTranslate(0, 34, 0)
+        glTranslate(0, 9, 2)
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
-        glVertex3f(self.largura, 0, self.largura)
+        glVertex3f(self.largura/3, 0, self.largura/3)
         glTexCoord2f(0.0, 0.0)
-        glVertex3f(- self.largura, 0, self.largura)
+        glVertex3f(- self.largura/3, 0, self.largura/3)
         glTexCoord2f(1.0, 0.0)
-        glVertex3f(- self.largura, 0, -self.largura)
+        glVertex3f(- self.largura/3, 0, -self.largura/3)
         glTexCoord2f(1.0, 1.0)
-        glVertex3f(self.largura, 0, -self.largura)
+        glVertex3f(self.largura/3, 0, -self.largura/3)
         glEnd()
 
         glPopMatrix()
@@ -176,20 +176,21 @@ class NaveJogador(Nave):
         # glPopMatrix()
 
     def move(self):
+        # print(self.angulo)
         glTranslate(self.x, self.y, 0)
 
         if self.esquerda:
             self.x -= self.velocidade
-
-            if self.angulo < 45: self.angulo += 1;
-            glRotatef(-self.angulo, 0, 1, 0)
+            if self.angulo > -45: self.angulo -= 1;
+            glRotatef(self.angulo, 0, 1, 0)
         elif self.direita:
             self.x += self.velocidade
-
             if self.angulo < 45: self.angulo += 1;
             glRotatef(self.angulo, 0, 1, 0)
-        else:
+        elif not self.esquerda and not self.direita:
             if self.angulo > 0: self.angulo -= 1
+            if self.angulo < 0: self.angulo += 1
+            glRotatef(self.angulo, 0, 1, 0)
 
     def atira(self):
         if not self.tiro1:
