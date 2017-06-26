@@ -13,8 +13,8 @@ class Audio:
     def __init__(self, app: QApplication, jogo):
         self.jogo = jogo
 
-        self.fundoJogo = "../sounds/fundo_jogo.mp3"
-        self.fundoJogoDuracao = 208800
+        self.fundoJogo = "../sounds/youngturks.mp3"
+        self.fundoJogoDuracao = 300000
 
         self.fundoMenu = "../sounds/fundo_menu.mp3"
         self.fundoMenuDuracao = 67200

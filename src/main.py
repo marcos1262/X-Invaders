@@ -79,8 +79,8 @@ class XInvaders(QOpenGLWidget):
         glEnable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
 
-        lightPosition = [0, 0, 0, 1]
-        lightColor = [.8, 1, .8, 1]
+        lightPosition = [self.jogador.x, 150, 200, 1]
+        lightColor = [0.8, 1, 0.8, 1]
         glLightfv(GL_LIGHT0, GL_POSITION, lightPosition)
         glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor)
         glLightfv(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.4)

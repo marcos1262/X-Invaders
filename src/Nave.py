@@ -26,7 +26,7 @@ class Nave(Objeto):
         glBegin(GL_QUADS)
 
         # face superior
-        color = [1, 1, 1, 1]
+        color = [0.65, 0.65, 0.65, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
         glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
@@ -34,7 +34,6 @@ class Nave(Objeto):
         glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
 
         # face inferior
-        color = [0.5, 0.5, 0.5, 0.5]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
         glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
@@ -42,7 +41,6 @@ class Nave(Objeto):
         glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
 
         # face traseira
-        color = [1, 0, 1, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
         glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
@@ -50,7 +48,6 @@ class Nave(Objeto):
         glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
 
         # face frontal
-        color = [1, 0, 0, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
         glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
@@ -58,7 +55,7 @@ class Nave(Objeto):
         glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, -15)  # inferior direito
 
         # face esquerda
-        color = [0, 1, 0, 1]
+        color = [0.45, 0.45, 0.45, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
         glVertex3f(self.x - self.largura / 2, self.y + self.altura / 2, -15)  # inferior esquerdo
@@ -66,7 +63,7 @@ class Nave(Objeto):
         glVertex3f(self.x - self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
 
         # face direita
-        color = [0, 0, 1, 1]
+        color = [0.45, 0.45, 0.45, 1]
         glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
         glVertex3f(self.x + self.largura / 2, self.y + self.altura / 2, 15)  # inferior esquerdo
         glVertex3f(self.x + self.largura / 2, self.y - self.altura / 2, 15)  # inferior direito
@@ -115,13 +112,16 @@ class NaveJogador(Nave):
         self.startTimer(self.taxaTiro)
 
     def desenha(self):
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.jogo.cockpit)
+
 
         glPushMatrix()
 
+        self.radar()
+
         self.move()
         glTranslate(0, 9, 2)
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.jogo.cockpit)
         glBegin(GL_QUADS)
         glTexCoord2f(0.0, 1.0)
         glVertex3f(self.largura/3, 0, self.largura/3)
@@ -206,6 +206,23 @@ class NaveJogador(Nave):
         tiro = Tiro(self, 12, 40, x, y, self.jogo.texturaTiro1, trajetoria)
         self.jogo.tiros.append(tiro)
 
+    def radar(self):
+        glPushMatrix()
+        glTranslate(self.x, self.y+8, -8.5)
+        glRotate(90, 1, 0, 0)
+        glScale(0.005, 0.005, 0.005)
+        for i in self.jogo.inimigos:
+            if abs(i.x-self.x)<=450 and 450>=i.y>=self.y:
+                glTranslate(i.x-self.x, i.y, 0)
+                color = [0, 1, 0, 1]
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+                glBegin(GL_QUADS)
+                glVertex3f(i.largura / 3, i.altura / 3, 0)
+                glVertex3f(-i.largura / 3, i.altura / 3, 0)
+                glVertex3f(-i.largura / 3, -i.altura / 3, 0)
+                glVertex3f(i.largura / 3, -i.altura / 3, 0)
+                glEnd()
+        glPopMatrix()
 
 class NaveCapanga(Nave):
     def __init__(self, jogo, largura, altura, x, y, trajetoria: Trajetoria):
