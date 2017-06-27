@@ -112,8 +112,6 @@ class NaveJogador(Nave):
         self.startTimer(self.taxaTiro)
 
     def desenha(self):
-
-
         glPushMatrix()
 
         self.radar()
@@ -136,60 +134,21 @@ class NaveJogador(Nave):
         glPopMatrix()
         glDisable(GL_TEXTURE_2D)
 
-        # v1 = [0, 0, 15]
-        # v2 = [- self.largura / 2,  -self.altura * 0.2, -15]
-        # v3 = [self.largura / 2,  -self.altura * 0.2, -15]
-        # v4 = [0, self.altura * 0.8, -15]
-        #
-        # glPushMatrix()
-        #
-        # self.move()
-        #
-        # glBegin(GL_TRIANGLES)
-        #
-        # color = [0.8, 0.8, 0.8, 1.0]
-        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        # glVertex3f(v1[0],v1[1],v1[2])  # superior
-        # glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
-        # glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
-        #
-        # color = [0, 1, 0, 1]
-        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        # glVertex3f(v4[0],v4[1],v4[2])  # bico
-        # glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
-        # glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
-        #
-        # color = [0, 0, 1, 1]
-        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        # glVertex3f(v1[0],v1[1],v1[2])  # superior
-        # glVertex3f(v4[0],v4[1],v4[2])  # bico
-        # glVertex3f(v2[0],v2[1],v2[2])  # inferior esquerdo
-        #
-        # color = [1, 0, 0, 1]
-        # glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
-        # glVertex3f(v1[0],v1[1],v1[2])  # superior
-        # glVertex3f(v3[0],v3[1],v3[2])  # inferior direito
-        # glVertex3f(v4[0],v4[1],v4[2])  # bico
-        #
-        # glEnd()
-        #
-        # glPopMatrix()
-
     def move(self):
         # print(self.angulo)
         glTranslate(self.x, self.y, 0)
 
         if self.esquerda:
             self.x -= self.velocidade
-            if self.angulo > -45: self.angulo -= 1;
+            if self.angulo > -45: self.angulo -= 2;
             glRotatef(self.angulo, 0, 1, 0)
         elif self.direita:
             self.x += self.velocidade
-            if self.angulo < 45: self.angulo += 1;
+            if self.angulo < 45: self.angulo += 3;
             glRotatef(self.angulo, 0, 1, 0)
         elif not self.esquerda and not self.direita:
-            if self.angulo > 0: self.angulo -= 1
-            if self.angulo < 0: self.angulo += 1
+            if self.angulo > 0: self.angulo -= 2
+            if self.angulo < 0: self.angulo += 3
             glRotatef(self.angulo, 0, 1, 0)
 
     def atira(self):
@@ -222,6 +181,18 @@ class NaveJogador(Nave):
                 glVertex3f(-i.largura / 3, -i.altura / 3, 0)
                 glVertex3f(i.largura / 3, -i.altura / 3, 0)
                 glEnd()
+        if self.jogo.boss is not None:
+            i = self.jogo.boss
+            if abs(i.x-self.x)<=450 and 450>=i.y>=self.y:
+                glTranslate(i.x-self.x, i.y, 0)
+                color = [0, 1, 0, 1]
+                glMaterialfv(GL_FRONT, GL_DIFFUSE, color)
+                glBegin(GL_QUADS)
+                glVertex3f(i.largura / 3, i.altura / 3, 0)
+                glVertex3f(-i.largura / 3, i.altura / 3, 0)
+                glVertex3f(-i.largura / 3, -i.altura / 3, 0)
+                glVertex3f(i.largura / 3, -i.altura / 3, 0)
+                glEnd()
         glPopMatrix()
 
 class NaveCapanga(Nave):
@@ -235,12 +206,8 @@ class NaveCapanga(Nave):
         self.trajetoria = trajetoria
 
         self.velocidade = 5 + self.jogo.nivel
-        if randint(0, 1):
-            self.textura = self.jogo.texturaCapanga1
-        else:
-            self.textura = self.jogo.texturaCapanga2
 
-        self.startTimer(400 - self.jogo.nivel * 5)
+        self.startTimer(400 - self.jogo.nivel * 2)
 
     def move(self):
         self.x, self.y = self.trajetoria.anterior(self.velocidade)
@@ -272,7 +239,6 @@ class NaveBoss(Nave):
         self.trajetoria = trajetoria
 
         self.velocidade = 2
-        self.textura = self.jogo.texturaBoss
 
         self.startTimer(300 - self.jogo.nivel * 10)
 

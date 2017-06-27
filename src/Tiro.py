@@ -22,7 +22,11 @@ class Tiro(Objeto):
         self.textura = textura
         self.angulo = angulo
 
-        self.velocidade = nave.velocidade+25
+        if str(type(self.nave)) == "<class 'Nave.NaveJogador'>":
+            self.velocidade = nave.velocidade+25
+        else:
+            self.velocidade = nave.velocidade+5
+
         self.visivel = True
 
     def desenha(self):
