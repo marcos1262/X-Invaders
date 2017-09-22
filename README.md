@@ -1,2 +1,2 @@
 # X-Invaders
-Um jogo de naves
+A spaceship game
